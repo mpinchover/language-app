@@ -10,6 +10,8 @@ import Post from "./components/post/post";
 import Account from "./components/account/account";
 import { AuthProvider } from "./auth/auth-context";
 import Login from "./components/login/login";
+import ProtectedRoute from "./auth/protected-route";
+import PublicRoute from "./auth/public-route";
 function App() {
   return (
     <AuthProvider>
@@ -20,13 +22,54 @@ function App() {
           <BrowserRouter>
             <Navbar />
             <Routes>
-              <Route path="/" Component={Feed} />
-              <Route path="/create-post" Component={CreatePost} />
-              <Route path="/my-posts" Component={MyPosts} />
-              <Route path="/post/:id" Component={Post} />
-              <Route path="/account" Component={Account} />
-              <Route path="/account" Component={Account} />
-              <Route path="/login" Component={Login} />
+              <Route
+                path="/"
+                element={
+                  <ProtectedRoute>
+                    <Feed />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/create-post"
+                Component={
+                  <ProtectedRoute>
+                    <CreatePost />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/my-posts"
+                Component={
+                  <ProtectedRoute>
+                    <MyPosts />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/post/:id"
+                Component={
+                  <ProtectedRoute>
+                    <Post />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/account"
+                Component={
+                  <ProtectedRoute>
+                    <Account />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/login"
+                element={
+                  <PublicRoute>
+                    <Login />
+                  </PublicRoute>
+                }
+              />
             </Routes>
           </BrowserRouter>
         </Box>

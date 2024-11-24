@@ -30,7 +30,7 @@ const Login = () => {
 
   return (
     <Box
-      border="1px solid"
+      // border="1px solid"
       flex={1}
       display="flex"
       justifyContent="center"

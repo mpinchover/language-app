@@ -8,22 +8,30 @@ import {
   Heading,
   Text,
   Link,
+  useToast,
 } from "@chakra-ui/react";
-import { Link as RouterLink } from "react-router-dom";
+
+import { Link as RouterLink, useNavigate } from "react-router-dom";
 
 const SignUp = ({ setIsSignIn }) => {
   const { signUp } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  //   const [error, setError] = useState("");
+  const navigate = useNavigate();
+  const toast = useToast();
 
   const handleSignUp = async () => {
     try {
       await signUp(email, password);
-      //   setError("");
+      navigate("/");
     } catch (err) {
-      //   setError(err.message);
+      toast({
+        title: "Error logging in",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
     }
   };
 
@@ -54,7 +62,7 @@ const SignUp = ({ setIsSignIn }) => {
       {/* Call to action */}
 
       <Text textAlign="center" fontSize="sm" color="gray.500">
-        Have an account?
+        Have an account?{" "}
         <Text
           as="span"
           color="blue.500"

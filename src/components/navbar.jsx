@@ -14,10 +14,12 @@ import { useState } from "react";
 import { GiChefToque } from "react-icons/gi";
 import { TbChefHat } from "react-icons/tb";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../auth/auth-context";
 
 const Navbar = ({ onSearch }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
+  const { logOut } = useAuth();
 
   const handleSearch = () => {
     if (searchQuery.trim()) {
@@ -30,7 +32,7 @@ const Navbar = ({ onSearch }) => {
       as="nav"
       padding="1rem"
       borderBottom="1px solid"
-      borderColor="gray.200"
+      borderColor="gray.100"
     >
       <Flex
         maxW="1000px" // Limit navbar width
@@ -82,7 +84,7 @@ const Navbar = ({ onSearch }) => {
             <MenuItem>My posts</MenuItem>
 
             <MenuItem>Settings</MenuItem>
-            <MenuItem>Logout</MenuItem>
+            <MenuItem onClick={logOut}>Logout</MenuItem>
           </MenuList>
         </Menu>
       </Flex>
