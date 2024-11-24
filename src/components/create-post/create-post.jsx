@@ -14,11 +14,34 @@ import {
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "@chakra-ui/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
 
 const STATE_UPLOAD_IMAGES = "STATE_UPLOAD_IMAGES";
 const STATE_DESCRIPTION_IMAGES = "STATE_DESCRIPTION_IMAGES";
+
+const images = [
+  {
+    src: "https://www.allrecipes.com/thmb/UsNtGp9OgIsKw6cPqGQ-CxLmnTE=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/AR-72657-best-hamburger-ever-ddmfs-4x3-hero-878e801ab30445988d007461782b3c25.jpg",
+    idx: 0,
+  },
+  {
+    src: "https://www.allrecipes.com/thmb/UsNtGp9OgIsKw6cPqGQ-CxLmnTE=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/AR-72657-best-hamburger-ever-ddmfs-4x3-hero-878e801ab30445988d007461782b3c25.jpg",
+    idx: 1,
+  },
+  {
+    src: "https://www.allrecipes.com/thmb/UsNtGp9OgIsKw6cPqGQ-CxLmnTE=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/AR-72657-best-hamburger-ever-ddmfs-4x3-hero-878e801ab30445988d007461782b3c25.jpg",
+    idx: 2,
+  },
+  {
+    src: "https://www.allrecipes.com/thmb/UsNtGp9OgIsKw6cPqGQ-CxLmnTE=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/AR-72657-best-hamburger-ever-ddmfs-4x3-hero-878e801ab30445988d007461782b3c25.jpg",
+    idx: 3,
+  },
+  {
+    src: "https://www.allrecipes.com/thmb/UsNtGp9OgIsKw6cPqGQ-CxLmnTE=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/AR-72657-best-hamburger-ever-ddmfs-4x3-hero-878e801ab30445988d007461782b3c25.jpg",
+    idx: 4,
+  },
+];
 
 const toBase64 = (file) =>
   new Promise((resolve, reject) => {
@@ -34,8 +57,20 @@ const UploadImages = ({
   isProcessingImages,
   updateCreatePostState,
 }) => {
+  const [imageOrder, setImageOrder] = useState({});
+  const [orderingQueue, setOrderingQueue] = useState([]);
+
+  useEffect(() => {
+    const orderQueue = [];
+
+    images.map((e, i) => {
+      orderQueue.push(i);
+    });
+    setOrderingQueue(orderQueue);
+  }, []);
+
   const onDrop = async (acceptedFiles) => {
-    setIsProcessingImages(true); // Show spinner while processing files
+    setIsProcessingImages(false); // Show spinner while processing files
 
     // Convert files to a format suitable for the backend
     const processedFiles = await Promise.all(
@@ -45,8 +80,8 @@ const UploadImages = ({
       })
     );
 
-    setIsProcessingImages(false); // Hide spinner when done
-    updateCreatePostState(STATE_DESCRIPTION_IMAGES);
+    setIsProcessingImages(true); // Hide spinner when done
+    // updateCreatePostState(STATE_DESCRIPTION_IMAGES);
     // onUpload(processedFiles); // Pass files to parent
   };
 
@@ -56,36 +91,93 @@ const UploadImages = ({
     // console.log("DRAG ACTIVE");
   }
 
-  // if it's false and the images have been uploaded to uploaded image state
+  const handleUpdateImageOrder = (imgIndex) => {
+    if (imageOrder[imgIndex] !== undefined) {
+      const orderForIdx = imageOrder[imgIndex];
+      setOrderingQueue((prev) => [orderForIdx, ...prev]);
+      setImageOrder((prev) => {
+        delete prev[imgIndex];
+        return prev;
+      });
+      return;
+    }
+    const nextOrderIdxInQueue = orderingQueue[0];
+    setOrderingQueue((prev) => prev.slice(1));
+    setImageOrder((prev) => {
+      return {
+        ...prev,
+        [imgIndex]: nextOrderIdxInQueue,
+      };
+    });
+  };
 
-  //   if (!isProcessingImages) {
-  //     return (
-  //       <Stack display="flex" justifyContent="center">
-  //         <Box
-  //           //   key={index}
-  //           width="full"
-  //           height="auto"
-  //           //   height="150px"
-  //           overflow="hidden"
-  //           border="1px solid #ccc"
-  //           borderRadius="8px"
-  //         >
-  //           <Image
-  //             src={
-  //               "https://www.onceuponachef.com/images/2018/02/pan-seared-salmon-.jpg"
-  //             }
-  //             // alt={img.name}
-  //             objectFit="cover"
-  //             width="100%"
-  //             height="100%"
-  //           />
-  //         </Box>
-  //         <Button onClick={() => updateCreatePostState(STATE_DESCRIPTION_IMAGES)}>
-  //           Next
-  //         </Button>
-  //       </Stack>
-  //     );
-  //   }
+  //   console.log("image order ", imageOrder);
+
+  // if it's false and the images have been uploaded to uploaded image state
+  if (!isProcessingImages) {
+    return (
+      <Stack display="flex" justifyContent="center">
+        <Box display="flex" justifyContent="flex-end" w="full">
+          <Text
+            as="button"
+            color="blue.500"
+            fontWeight="bold"
+            fontSize="lg"
+            cursor="pointer"
+            onClick={() => updateCreatePostState(STATE_DESCRIPTION_IMAGES)} // Update the state on click
+            _hover={{ color: "blue.400" }} // Subtle color change on hover
+          >
+            Next
+          </Text>
+        </Box>
+        <Grid
+          templateColumns="repeat(auto-fill, minmax(150px, 1fr))"
+          gap={4}
+          maxW="1000px"
+          w="full"
+        >
+          {images.map((img, idx) => (
+            <Box
+              key={idx}
+              as="button" // Makes the box clickable
+              // onClick={() => handleClick(post.id)}
+
+              // use a Q to manage the ordering
+              onClick={() => handleUpdateImageOrder(img.idx)}
+              //   borderWidth="1px"
+              borderRadius="md"
+              backgroundColor="black"
+              overflow="hidden"
+              position="relative"
+              //   objectFit={"cover"}
+              _hover={{ transform: "scale(1.05)", boxShadow: "lg" }}
+              transition="transform 0.2s ease-in-out"
+            >
+              <Image h="100%" w="100%" objectFit={"cover"} src={img.src} />
+
+              <Box
+                position="absolute"
+                bottom="8px"
+                right="8px"
+                h="30px"
+                w="30px"
+                bg="rgba(255, 255, 255, 0.8)"
+                borderRadius="full"
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+                fontWeight="bold"
+                color="black"
+                fontSize="md"
+              >
+                {imageOrder[idx] !== undefined ? imageOrder[idx] + 1 : ""}
+              </Box>
+            </Box>
+          ))}
+        </Grid>
+      </Stack>
+    );
+  }
 
   return (
     <Box
@@ -150,7 +242,7 @@ const DescribePost = ({ handleUploadImages }) => {
 
   return (
     <Stack display="flex" justifyContent="center">
-      <Grid
+      {/* <Grid
         templateColumns="repeat(auto-fill, minmax(100px, 1fr))"
         gap={4}
         w="full"
@@ -179,7 +271,7 @@ const DescribePost = ({ handleUploadImages }) => {
             />
           </Box>
         ))}
-      </Grid>
+      </Grid> */}
       {/* Post Title Input */}
       <Box>
         <Input

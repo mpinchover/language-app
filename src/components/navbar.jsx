@@ -13,9 +13,11 @@ import {
 import { useState } from "react";
 import { GiChefToque } from "react-icons/gi";
 import { TbChefHat } from "react-icons/tb";
+import { useNavigate } from "react-router-dom";
 
 const Navbar = ({ onSearch }) => {
   const [searchQuery, setSearchQuery] = useState("");
+  const navigate = useNavigate();
 
   const handleSearch = () => {
     if (searchQuery.trim()) {
@@ -37,7 +39,13 @@ const Navbar = ({ onSearch }) => {
         alignItems="center"
       >
         {/* Left: Logo */}
-        <TbChefHat fontSize={28} />
+        <TbChefHat
+          cursor={"pointer"}
+          fontSize={28}
+          onClick={() => {
+            navigate("/");
+          }}
+        />
 
         {/* Middle: Search Bar */}
         <Box flex="1" mx="4">
