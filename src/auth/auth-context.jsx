@@ -4,6 +4,7 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
+  sendPasswordResetEmail,
   onAuthStateChanged,
 } from "firebase/auth";
 import app from "./firebase"; // Import your Firebase configuration
@@ -34,12 +35,22 @@ export const AuthProvider = ({ children }) => {
     await signInWithEmailAndPassword(auth, email, password);
   };
 
+  const resetPassword = async (email) => {
+    try {
+      await sendPasswordResetEmail(auth, email);
+    } catch (error) {
+      throw error;
+    }
+  };
+
   const logOut = async () => {
     await signOut(auth);
   };
 
   return (
-    <AuthContext.Provider value={{ user, signUp, logIn, logOut, loading }}>
+    <AuthContext.Provider
+      value={{ user, signUp, logIn, logOut, resetPassword, loading }}
+    >
       {children}
     </AuthContext.Provider>
   );

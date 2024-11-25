@@ -9,24 +9,22 @@ import {
   Text,
   Link,
 } from "@chakra-ui/react";
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
 import Signin from "./sign-in";
 import SignUp from "./sign-up";
+import {
+  STATE_FORGOT_PASSWORD,
+  STATE_SIGN_IN,
+  STATE_SIGN_UP,
+} from "./constants";
+import ForgotPassword from "./forgot-password";
 
 const Login = () => {
   const { logIn } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isSignIn, setIsSignIn] = useState(true);
-
-  const handleLogIn = async () => {
-    try {
-      await logIn(email, password);
-      // setError("");
-    } catch (err) {
-      // setError(err.message);
-    }
-  };
+  const [loginState, setLoginState] = useState(STATE_SIGN_IN);
+  const navigate = useNavigate();
 
   return (
     <Box
@@ -38,8 +36,15 @@ const Login = () => {
       p={6}
     >
       <Stack maxW="xl" w="full" spacing={4}>
-        {isSignIn && <Signin setIsSignIn={setIsSignIn} />}
-        {!isSignIn && <SignUp setIsSignIn={setIsSignIn} />}
+        {loginState === STATE_SIGN_IN && (
+          <Signin setLoginState={setLoginState} />
+        )}
+        {loginState === STATE_SIGN_UP && (
+          <SignUp setLoginState={setLoginState} />
+        )}
+        {loginState === STATE_FORGOT_PASSWORD && (
+          <ForgotPassword setLoginState={setLoginState} />
+        )}
       </Stack>
     </Box>
   );

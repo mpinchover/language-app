@@ -8,21 +8,31 @@ import {
   Heading,
   Text,
   Link,
+  useToast,
 } from "@chakra-ui/react";
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
+import { STATE_FORGOT_PASSWORD, STATE_SIGN_UP } from "./constants";
 
-const SignIn = ({ setIsSignIn }) => {
+const SignIn = ({ setLoginState }) => {
   const { logIn } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const navigate = useNavigate();
+
+  const toast = useToast();
+  //   const [error, setError] = useState("");
 
   const handleLogIn = async () => {
     try {
       await logIn(email, password);
-      setError("");
+      navigate("/");
     } catch (err) {
-      setError(err.message);
+      toast({
+        title: "Error logging in",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
     }
   };
 
@@ -46,9 +56,15 @@ const SignIn = ({ setIsSignIn }) => {
 
       {/* Call to action */}
       <Text textAlign="center" fontSize="sm" color="gray.500">
-        <Link as={RouterLink} to="/sign-up" color="grey.500" fontWeight="bold">
+        <Text
+          as="span"
+          color="grey.500"
+          fontWeight="bold"
+          cursor="pointer"
+          onClick={() => setLoginState(STATE_FORGOT_PASSWORD)}
+        >
           Forgot password
-        </Link>
+        </Text>
       </Text>
       <Text textAlign="center" fontSize="sm" color="gray.500">
         No account?{" "}
@@ -57,7 +73,7 @@ const SignIn = ({ setIsSignIn }) => {
           color="blue.500"
           fontWeight="semibold"
           cursor="pointer"
-          onClick={() => setIsSignIn(false)}
+          onClick={() => setLoginState(STATE_SIGN_UP)}
         >
           Sign up
         </Text>

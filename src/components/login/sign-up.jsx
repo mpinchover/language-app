@@ -12,8 +12,9 @@ import {
 } from "@chakra-ui/react";
 
 import { Link as RouterLink, useNavigate } from "react-router-dom";
+import { STATE_SIGN_IN } from "./constants";
 
-const SignUp = ({ setIsSignIn }) => {
+const SignUp = ({ setLoginState }) => {
   const { signUp } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -68,7 +69,7 @@ const SignUp = ({ setIsSignIn }) => {
           color="blue.500"
           fontWeight="semibold"
           cursor="pointer"
-          onClick={() => setIsSignIn(true)}
+          onClick={() => setLoginState(STATE_SIGN_IN)}
         >
           Sign in
         </Text>
