@@ -23,6 +23,25 @@ import { useRecoilState } from "recoil";
 import { v4 as uuidv4 } from "uuid";
 import Timeline from "./timeline";
 
+const EditButton = ({ displayRange, handleCut }) => {
+  return (
+    <Box
+      style={{
+        opacity: displayRange ? 1 : 0, // Animate opacity
+        transition: "opacity 0.3s ease-in-out", // Smooth transition
+        pointerEvents: displayRange ? "auto" : "none", // Disable interaction when hidden
+      }}
+      position="absolute"
+      right="50px"
+      top="50px"
+    >
+      <Button onClick={handleCut}>
+        <RxScissors />
+      </Button>
+    </Box>
+  );
+};
+
 const STEP = 0.25;
 const videoURL =
   "https://storage.googleapis.com/video-editor-uploads/demo_1.mp4";
@@ -43,7 +62,6 @@ const VideoPlayer = ({ saveVideoCut }) => {
   const theme = useTheme();
   const blue500 = theme.colors.blue[600]; // Get the value of "blue.500"
 
-  useEffect(() => {}, []);
   const handleCut = () => {
     const startTime = range[0];
     let endTime = range[1];
@@ -123,21 +141,14 @@ const VideoPlayer = ({ saveVideoCut }) => {
         }}
       />
 
-      <Timeline />
-      <Box
-        style={{
-          opacity: displayRange ? 1 : 0, // Animate opacity
-          transition: "opacity 0.3s ease-in-out", // Smooth transition
-          pointerEvents: displayRange ? "auto" : "none", // Disable interaction when hidden
-        }}
-        position="absolute"
-        right="50px"
-        top="50px"
-      >
-        <Button onClick={handleCut}>
-          <RxScissors />
-        </Button>
-      </Box>
+      <Timeline
+        range={range}
+        setRange={setRange}
+        duration={duration}
+        videoRef={videoRef}
+        displayRange={displayRange}
+      />
+      <EditButton handleCut={handleCut} displayRange={displayRange} />
     </Box>
   );
 };

@@ -24,11 +24,11 @@ import { v4 as uuidv4 } from "uuid";
 
 const STEP = 0.25;
 
-const Timeline = () => {
-  const videoRef = useRef(null);
+const Timeline = ({ displayRange, videoRef, duration, range, setRange }) => {
+  //   const videoRef = useRef(null);
   const sliderRef = useRef(null); // Ref for the input slider
-  const [duration, setDuration] = useState(0);
-  const [range, setRange] = useState([0, 0]);
+  //   const [duration, setDuration] = useState(0);
+  //   const [range, setRange] = useState([0, 0]);
   const [overlays, setOverlays] = useState([]);
   const [isDragging, setIsDragging] = useState(false);
   const [startPos, setStartPos] = useState({ x: 0, y: 0 });
@@ -36,7 +36,7 @@ const Timeline = () => {
   const [isPlaying, setIsPlaying] = useState(false);
 
   const [videoClips, setVideoClips] = useState([]);
-  const [displayRange, setDisplayRange] = useState(false);
+  //   const [displayRange, setDisplayRange] = useState(false);
   const theme = useTheme();
   const blue500 = theme.colors.blue[600]; // Get the value of "blue.500"
 
