@@ -18,25 +18,30 @@ import { RxScissors } from "react-icons/rx";
 import VideoClipPlayer from "./video-clip-player";
 import { FaPause, FaPlay } from "react-icons/fa";
 import { useTheme } from "@chakra-ui/react";
+import { videoClipsStore } from "../../recoil/video";
+import { useRecoilState } from "recoil";
+import { v4 as uuidv4 } from "uuid";
 
-const VideoClipsList = ({ videoClips }) => {
+const VideoClipsList = ({ videoClips, removeVideoClip }) => {
   return (
     <Box
       display="flex"
       flexDirection="row"
       alignItems="flex-start"
       justifyContent={"flex-start"}
-      //   border="solid 19px green"
       width="100%"
     >
       {videoClips.map((e, idx) => {
-        const { src, startTime, endTime } = e;
+        const { src, startTime, endTime, id } = e;
         return (
           <VideoClipPlayer
+            removeVideoClip={removeVideoClip}
             src={src}
             startTime={startTime}
             endTime={endTime}
             idx={idx}
+            width="100%"
+            key={id}
           />
         );
       })}
@@ -83,8 +88,9 @@ const VideoPlayer = ({ saveVideoCut }) => {
       src: videoURL,
       startTime,
       endTime,
+      id: uuidv4(),
     });
-    setRange([1, videoRef.current.duration]);
+    // setRange([1, videoRef.current.duration]);
   };
 
   useEffect(() => {
@@ -115,7 +121,6 @@ const VideoPlayer = ({ saveVideoCut }) => {
   }, [range]);
 
   const onChangeStart = () => {
-    // Optional: Pause the video while dragging
     if (videoRef.current) videoRef.current.pause();
   };
 
@@ -140,9 +145,9 @@ const VideoPlayer = ({ saveVideoCut }) => {
 
   const onChangeEnd = () => {
     if (videoRef.current) {
-      //   console.log("ENDED");
       videoRef.current.currentTime = range[0];
       videoRef.current.play();
+      setIsPlaying(true);
     }
   };
 
@@ -274,13 +279,18 @@ const VideoPlayer = ({ saveVideoCut }) => {
 };
 
 const VideoEditor = () => {
-  const [videoClips, setVideoClips] = useState([]);
+  const [videoClips, setVideoClips] = useRecoilState(videoClipsStore);
+  //   const [videoClips, setVideoClips] = useState([]);
 
   useEffect(() => {}, []);
 
   const saveVideoCut = (clip) => {
     clip.idx = videoClips.length;
     setVideoClips([...videoClips, clip]);
+  };
+
+  const removeVideoClip = (indexToRemove) => {
+    setVideoClips((prev) => prev.filter((_, index) => index !== indexToRemove));
   };
 
   return (
@@ -292,28 +302,18 @@ const VideoEditor = () => {
       alignItems="center"
     >
       <VideoPlayer saveVideoCut={saveVideoCut} />
-      {videoClips.length > 0 && <VideoClipsList videoClips={videoClips} />}
+      {videoClips.length > 0 && (
+        <VideoClipsList
+          removeVideoClip={removeVideoClip}
+          videoClips={videoClips}
+        />
+      )}
     </Box>
   );
 };
 
 const VideoDashboard = () => {
-  //   const [videoClips, setVideoClips] = useState([]);
-
-  //   useEffect(() => {}, []);
-  //   const handleCut = () => {
-  //     const startTime = range[0];
-  //     let endTime = range[1];
-  //     if (endTime > videoRef?.current.duration) {
-  //       endTime = videoRef?.current.duration;
-  //     }
-  //     saveVideoCut({
-  //       src: videoURL,
-  //       startTime,
-  //       endTime,
-  //     });
-  //     setRange([1, videoRef.current.duration]);
-  //   };
+  useEffect(() => {}, []);
 
   return (
     <Box flex={1} display="flex" justifyContent={"center"}>

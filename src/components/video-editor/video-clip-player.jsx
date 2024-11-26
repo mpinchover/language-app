@@ -9,7 +9,7 @@ import {
   Button,
 } from "@chakra-ui/react";
 import { MdDelete } from "react-icons/md";
-function VideoClipPlayer({ src, startTime, endTime, idx }) {
+function VideoClipPlayer({ src, startTime, endTime, idx, removeVideoClip }) {
   const videoRef = useRef(null);
 
   useEffect(() => {
@@ -37,6 +37,9 @@ function VideoClipPlayer({ src, startTime, endTime, idx }) {
     };
   }, []);
 
+  const handleRemove = () => {
+    removeVideoClip(idx);
+  };
   return (
     <Box
       display="flex"
@@ -59,7 +62,14 @@ function VideoClipPlayer({ src, startTime, endTime, idx }) {
           objectFit: "cover",
         }}
       />
-      <Button opacity={0.8} size="xs" position="absolute" top="5px" right="5px">
+      <Button
+        onClick={() => handleRemove(idx)}
+        opacity={0.8}
+        size="xs"
+        position="absolute"
+        top="5px"
+        right="5px"
+      >
         <MdDelete />
       </Button>
     </Box>
