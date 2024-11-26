@@ -12,7 +12,7 @@ import { AuthProvider } from "./auth/auth-context";
 import Login from "./components/login/login";
 import ProtectedRoute from "./auth/protected-route";
 import PublicRoute from "./auth/public-route";
-import VideoEditor from "./components/video-editor/video-editor";
+import VideoDashboard from "./components/video-editor/video-dashboard";
 
 function App() {
   const location = useLocation();
@@ -81,7 +81,7 @@ function App() {
               path="/video-editor"
               element={
                 // <PublicRoute>
-                <VideoEditor />
+                <VideoDashboard />
                 // </PublicRoute>
               }
             />
