@@ -30,7 +30,7 @@ const Post = ({ avatarPicture, postTitle, imgSrc, description, tags }) => {
   };
 
   return (
-    <Card maxW="xl" width="full">
+    <Card maxW="xl" width="full" boxShadow={"none"}>
       <CardBody>
         <Stack mt="6" spacing="3">
           <HStack>
@@ -70,7 +70,7 @@ const Post = ({ avatarPicture, postTitle, imgSrc, description, tags }) => {
           )}
         </Stack>
       </CardBody>
-      <Divider />
+
       <CardFooter flexDir={"column"}>
         <Stack spacing="3">
           <ButtonGroup spacing="2">

@@ -1,4 +1,4 @@
-import { Box, Stack, Spinner } from "@chakra-ui/react";
+import { Box, Stack, Spinner, Divider } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
 import FeedPost from "./feed-post"; // Import the Post component
 import CreatePostButton from "./create-post-button"; // Import the CreatePostButton component
@@ -137,14 +137,17 @@ const Feed = () => {
         <CreatePostButton />
 
         {posts.map((post, index) => (
-          <FeedPost
-            key={index}
-            postTitle={post.postTitle}
-            imgSrc={post.imgSrc}
-            description={post.description}
-            avatarPicture={post.avatarPicture}
-            tags={post.tags}
-          />
+          <>
+            <FeedPost
+              key={index}
+              postTitle={post.postTitle}
+              imgSrc={post.imgSrc}
+              description={post.description}
+              avatarPicture={post.avatarPicture}
+              tags={post.tags}
+            />
+            {index < posts.length - 1 && <Divider />}
+          </>
         ))}
 
         {/* Sentinel for Infinite Scroll */}

@@ -62,7 +62,6 @@ const Post = () => {
   };
 
   const handleDeletePost = () => {
-    // Add logic for deleting the post
     navigate("/"); // Redirect to the home page after deletion
   };
 
@@ -79,12 +78,14 @@ const Post = () => {
             <Avatar src="https://via.placeholder.com/50" />
             <Text fontWeight="bold">JohnDoe</Text>
           </Stack>
-          <IconButton
-            icon={<FiEdit />}
+          <Button
             onClick={handleEditClick}
-            aria-label="Edit Post"
             variant="ghost"
-          />
+            size="sm"
+            fontWeight="bold"
+          >
+            {isEditing ? "Cancel" : "Edit"}
+          </Button>
         </Stack>
 
         {/* Post Picture */}
@@ -156,9 +157,6 @@ const Post = () => {
             <Button mt={4} onClick={handleSavePost} width="full">
               Save
             </Button>
-            <Button mt={4} onClick={handleSavePost} width="full">
-              Cancel
-            </Button>
             <Button
               mt={4}
               colorScheme="red"
@@ -195,7 +193,6 @@ const Post = () => {
               key={comment.id}
               p={2}
               borderRadius="md"
-              //   border="1px solid"
               borderColor="gray.200"
             >
               <Text fontWeight="bold">{comment.user}</Text>

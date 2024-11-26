@@ -1,7 +1,9 @@
 import { Box, Grid, Image, Text } from "@chakra-ui/react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const MyPosts = () => {
+  const navigate = useNavigate();
   const [posts, setPosts] = useState([
     { id: 1, image: "https://via.placeholder.com/150", alt: "Post 1" },
     { id: 2, image: "https://via.placeholder.com/150", alt: "Post 2" },
@@ -15,6 +17,7 @@ const MyPosts = () => {
 
   const handleClick = (id) => {
     console.log(`Post clicked: ${id}`);
+    navigate(`/post/${id}`);
     // Add your logic here (e.g., navigate to a new page or open a modal)
   };
 

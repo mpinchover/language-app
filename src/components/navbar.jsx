@@ -81,9 +81,9 @@ const Navbar = ({ onSearch }) => {
           </MenuButton>
           <MenuList>
             <MenuItem>Messages</MenuItem>
-            <MenuItem>My posts</MenuItem>
+            <MenuItem onClick={() => navigate("/my-posts")}>My posts</MenuItem>
 
-            <MenuItem>Settings</MenuItem>
+            <MenuItem onClick={() => navigate("/account")}>Account</MenuItem>
             <MenuItem onClick={logOut}>Logout</MenuItem>
           </MenuList>
         </Menu>
