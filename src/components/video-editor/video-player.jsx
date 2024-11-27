@@ -112,11 +112,6 @@ const VideoPlayer = ({ saveVideoCut }) => {
     setDisplayRange(false);
   };
 
-  const handleTrackClick = (e) => {
-    e.stopPropagation(); // Prevent the default click behavior
-    e.preventDefault();
-  };
-
   return (
     <Box
       onMouseEnter={onMouseEnterVideo}
