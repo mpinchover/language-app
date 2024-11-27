@@ -21,6 +21,7 @@ import { useTheme } from "@chakra-ui/react";
 import { videoClipsStore } from "../../recoil/video";
 import { useRecoilState } from "recoil";
 import { v4 as uuidv4 } from "uuid";
+import VideoPreview from "./video-preview";
 
 const VideoDashboard = () => {
   useEffect(() => {}, []);
@@ -67,6 +68,13 @@ const VideoDashboard = () => {
           <TabPanel display="flex" p={0} flex={1}>
             <VideoEditor />
           </TabPanel>
+          <TabPanel display="flex" p={0} flex={1}>
+            <VideoPreview />
+          </TabPanel>
+          <TabPanel display="flex" p={0} flex={1}>
+            <VideoPreview />
+          </TabPanel>
+
           {/* <TabPanel display="flex" flex={1}>
               <PreviewVideo />
             </TabPanel> */}
