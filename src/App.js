@@ -13,6 +13,7 @@ import Login from "./components/login/login";
 import ProtectedRoute from "./auth/protected-route";
 import PublicRoute from "./auth/public-route";
 import VideoDashboard from "./components/video-editor/video-dashboard";
+import VideoChat from "./components/video-chat";
 
 function App() {
   const location = useLocation();
@@ -35,6 +36,14 @@ function App() {
                 <ProtectedRoute>
                   <Feed />
                 </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/video-chat"
+              element={
+                // <ProtectedRoute>
+                <VideoChat />
+                // </ProtectedRoute>
               }
             />
             <Route
