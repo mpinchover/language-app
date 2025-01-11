@@ -43,45 +43,30 @@ const VideoChat = () => {
   currentIDRef.current = currentID;
   remotePeerIDRef.current = remotePeerID;
 
-  const handleIncomingCall = (msg) => {
-    const { callFrom } = msg;
-    setRemotePeerID(callFrom);
-  };
+  const handleRecvSignalData = (msg) => {
+    const { signalData, fromPeer, toPeer } = msg;
 
-  // answer incoming call
-  const handleAnswerCall = () => {
-    currentIDRef.current = currentID;
-    const data = {
-      eventType: "answer_call",
-      callRecvr: currentIDRef.current,
-      callFrom: remotePeerIDRef.current,
-    };
+    if (!peerRef.current) {
+      peerRef.current = new Peer({ trickle: false });
+    }
 
-    wsRef.current.send(JSON.stringify(data));
-    toast({
-      title: "You have answered incoming call.",
-      // description: "We've created your account for you.",
-      status: "success",
-      duration: 10000,
-      isClosable: true,
-    });
-    console.log("CREATING PEER");
-    const peer = new Peer({ trickle: false });
-    peerRef.current = peer;
+    if (!remotePeerIDRef.current) {
+      remotePeerIDRef.current = fromPeer;
+    }
 
-    peer.on("signal", (data) => {
+    peerRef.current.on("signal", (data) => {
+      console.log("Sending signal to peer");
       const signalData = {
         eventType: "signal_data",
         data,
         fromPeer: currentIDRef.current,
         toPeer: remotePeerIDRef.current,
       };
-      console.log("Sending back signal data", signalData);
+
       wsRef.current.send(JSON.stringify(signalData));
     });
 
-    peer.on("connect", (data) => {
-      console.log("CONNECTION CREATED");
+    peerRef.current.on("connect", (data) => {
       toast({
         title: `Connection established with ${remotePeerIDRef.current}`,
         // description: "We've created your account for you.",
@@ -90,59 +75,7 @@ const VideoChat = () => {
         isClosable: true,
       });
     });
-  };
-
-  // remote peer has answered your call
-  const handleCallAnswered = (msg) => {
-    const { callRecvr, callFrom } = msg;
-
-    // the call has been answered
-    // so now set up the peers and send the signal data
-    toast({
-      title: "Remote peer has answered your call.",
-      // description: "We've created your account for you.",
-      status: "success",
-      duration: 10000,
-      isClosable: true,
-    });
-
-    console.log("CREATING PEER");
-    const peer = new Peer({ trickle: false, initiator: true });
-    peerRef.current = peer;
-
-    peer.on("signal", (data) => {
-      const signalData = {
-        eventType: "signal_data",
-        data,
-        fromPeer: currentIDRef.current,
-        toPeer: remotePeerIDRef.current,
-      };
-      console.log("Sending back signal data", signalData);
-
-      // issue is in this closure the ws i undefined
-      wsRef.current.send(JSON.stringify(signalData));
-    });
-
-    peer.on("connect", (data) => {
-      console.log("CONNECTION CREATED");
-      toast({
-        title: `Connection established with ${callRecvr}`,
-        // description: "We've created your account for you.",
-        status: "success",
-        duration: 10000,
-        isClosable: true,
-      });
-    });
-  };
-
-  const handleRecvSignalData = (msg) => {
-    const { signalData } = msg;
-
-    console.log("Handle recvd signal data");
-    if (peerRef.current) {
-      console.log("CALLING PEER.SIGNAL");
-      peerRef.current.signal(signalData);
-    }
+    peerRef.current.signal(signalData);
   };
 
   useEffect(() => {
@@ -158,18 +91,13 @@ const VideoChat = () => {
       const message = JSON.parse(msg.data);
 
       switch (message.eventType) {
-        case "incoming_call":
-          handleIncomingCall(message);
+        // case "incoming_call":
+        //   handleIncomingCall(message);
         case "new_user":
           setCurrentID(message.data);
           break;
-        // case "signal_data":
-        //   if (peer) {
-        //     peer.signal(message.signalData);
-        //   }
-        //   break;
-        case "call_answered":
-          handleCallAnswered(message);
+          // case "call_answered":
+          //   handleCallAnswered(message);
           break;
         case "signal_data":
           handleRecvSignalData(message);
@@ -185,25 +113,50 @@ const VideoChat = () => {
   }, []);
 
   const handleMakeCall = () => {
-    setIsCalling(true);
     currentIDRef.current = currentID;
+    remotePeerIDRef.current = remotePeerID.replace(/\s/g, "_");
 
-    const callData = {
-      eventType: "make_call",
-      callTo: remotePeerIDRef.current.replace(/\s/g, "_"),
-      callFrom: currentID,
-    };
-    wsRef.current.send(JSON.stringify(callData));
+    toast({
+      title: `Attempting to connect with ${remotePeerID}`,
+      // description: "We've created your account for you.",
+      status: "success",
+      duration: 10000,
+      isClosable: true,
+    });
+
+    const peer = new Peer({ trickle: false, initiator: true });
+    peerRef.current = peer;
+
+    peer.on("signal", (data) => {
+      const signalData = {
+        eventType: "signal_data",
+        data,
+        fromPeer: currentIDRef.current,
+        toPeer: remotePeerIDRef.current,
+      };
+      // console.log("Sending back signal data", signalData);
+
+      // issue is in this closure the ws i undefined
+      wsRef.current.send(JSON.stringify(signalData));
+    });
+
+    peer.on("connect", (data) => {
+      toast({
+        title: `Connection established with ${remotePeerIDRef.current}`,
+        // description: "We've created your account for you.",
+        status: "success",
+        duration: 10000,
+        isClosable: true,
+      });
+    });
   };
 
   return (
     <Box p={6}>
       <Box display="flex" flexDirection="row">
-        <Text display="inline">
-          Hello,{" "}
-          <Text display="inline" fontWeight={"bold"}>
-            {currentID?.replace(/_/g, " ")}
-          </Text>
+        <Text display="inline">Hello, </Text>
+        <Text display="inline" fontWeight={"bold"}>
+          {currentID?.replace(/_/g, " ")}
         </Text>
       </Box>
       {!isCalling && (
@@ -213,7 +166,7 @@ const VideoChat = () => {
           setRemotePeerID={setRemotePeerID}
         />
       )}
-      {isCalling && (
+      {/* {isCalling && (
         <Text display="inline">
           Calling{" "}
           <Text display="inline" fontWeight={"bold"}>
@@ -221,12 +174,12 @@ const VideoChat = () => {
           </Text>
           ...
         </Text>
-      )}
-      {remotePeerIDRef.current && (
+      )} */}
+      {/* {remotePeerIDRef.current && (
         <Button onClick={handleAnswerCall} mt={2}>
           Answer call
         </Button>
-      )}
+      )} */}
     </Box>
   );
 };
