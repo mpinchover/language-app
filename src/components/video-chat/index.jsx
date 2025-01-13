@@ -25,7 +25,9 @@ const CallForm = ({ handleMakeCall, remotePeerID, setRemotePeerID }) => {
     </Box>
   );
 };
-
+function sleep(milliseconds) {
+  return new Promise((resolve) => setTimeout(resolve, milliseconds));
+}
 const VideoChat = () => {
   // const [ws, setWs] = useState(null);
   const wsRef = useRef();
@@ -36,81 +38,28 @@ const VideoChat = () => {
   const peerRef = useRef();
   const [isCalling, setIsCalling] = useState(false);
   const toast = useToast();
+  const streamRef = useRef();
 
   const videoRef = useRef();
-  const chattingWithVideoRef = useRef();
+  const remotePeerVideoRef = useRef();
+  const connectionCreated = useRef();
 
   currentIDRef.current = currentID;
   remotePeerIDRef.current = remotePeerID;
 
-  const handleRecvSignalData = (msg) => {
-    const { signalData, fromPeer, toPeer } = msg;
-
-    if (!peerRef.current) {
-      peerRef.current = new Peer({ trickle: false });
-    }
-
-    if (!remotePeerIDRef.current) {
-      remotePeerIDRef.current = fromPeer;
-    }
-
-    peerRef.current.on("signal", (data) => {
-      console.log("Sending signal to peer");
-      const signalData = {
-        eventType: "signal_data",
-        data,
-        fromPeer: currentIDRef.current,
-        toPeer: remotePeerIDRef.current,
-      };
-
-      wsRef.current.send(JSON.stringify(signalData));
+  const handleCallAnswered = (msg) => {
+    toast({
+      title: `Call has been answered by`,
+      // description: "We've created your account for you.",
+      status: "success",
+      duration: 10000,
+      isClosable: true,
     });
 
-    peerRef.current.on("connect", (data) => {
-      toast({
-        title: `Connection established with ${remotePeerIDRef.current}`,
-        // description: "We've created your account for you.",
-        status: "success",
-        duration: 10000,
-        isClosable: true,
-      });
-    });
-    peerRef.current.signal(signalData);
+    const { data } = msg;
+    console.log("DATA IS ", data);
+    peerRef.current.signal(data);
   };
-
-  useEffect(() => {
-    const socket = new WebSocket("ws://localhost:5100");
-    // const currentId = uuidv4();
-    // s/etCurrentID(currentId);
-    // setWs(socket);
-    wsRef.current = socket;
-
-    socket.onopen = () => {};
-
-    socket.onmessage = (msg) => {
-      const message = JSON.parse(msg.data);
-
-      switch (message.eventType) {
-        // case "incoming_call":
-        //   handleIncomingCall(message);
-        case "new_user":
-          setCurrentID(message.data);
-          break;
-          // case "call_answered":
-          //   handleCallAnswered(message);
-          break;
-        case "signal_data":
-          handleRecvSignalData(message);
-          break;
-        default:
-          console.log("Received unknown event type");
-      }
-    };
-
-    return () => {
-      socket.close();
-    };
-  }, []);
 
   const handleMakeCall = () => {
     currentIDRef.current = currentID;
@@ -124,23 +73,26 @@ const VideoChat = () => {
       isClosable: true,
     });
 
-    const peer = new Peer({ trickle: false, initiator: true });
-    peerRef.current = peer;
+    const peer = new Peer({
+      trickle: false,
+      initiator: true,
+      stream: streamRef.current,
+    });
 
     peer.on("signal", (data) => {
       const signalData = {
-        eventType: "signal_data",
+        eventType: "initiator_make_call",
         data,
         fromPeer: currentIDRef.current,
         toPeer: remotePeerIDRef.current,
       };
-      // console.log("Sending back signal data", signalData);
 
-      // issue is in this closure the ws i undefined
+      console.log("initiator has signal");
       wsRef.current.send(JSON.stringify(signalData));
     });
 
     peer.on("connect", (data) => {
+      console.log("initiator has connection");
       toast({
         title: `Connection established with ${remotePeerIDRef.current}`,
         // description: "We've created your account for you.",
@@ -149,14 +101,119 @@ const VideoChat = () => {
         isClosable: true,
       });
     });
+
+    peer.on("stream", (stream) => {
+      console.log("initiator has remote stream");
+      remotePeerVideoRef.current.srcObject = stream;
+      remotePeerVideoRef.current.play();
+      toast({
+        title: `Got video stream from  ${remotePeerIDRef.current}`,
+        // description: "We've created your account for you.",
+        status: "success",
+        duration: 10000,
+        isClosable: true,
+      });
+    });
+    peerRef.current = peer;
   };
+
+  const handleIncomingCall = (msg) => {
+    const { data: signalData, fromPeer } = msg;
+
+    if (!peerRef.current) {
+      console.log("Creating a new peer");
+      const peer = new Peer({ trickle: false, stream: streamRef.current });
+      // peer.signal(signalData);
+
+      peer.on("connect", (data) => {
+        toast({
+          title: `[recv] Connection established with ${remotePeerIDRef.current}`,
+          // description: "We've created your account for you.",
+          status: "success",
+          duration: 10000,
+          isClosable: true,
+        });
+      });
+
+      peer.on("signal", (_data) => {
+        // sleep(1000);
+        console.log("RECV Signal acquired");
+        const _signalData = {
+          eventType: "answer_call",
+          data: _data,
+          fromPeer: currentIDRef.current,
+          toPeer: fromPeer,
+        };
+
+        // console.log("Sending signal 1", signalData);
+        wsRef.current.send(JSON.stringify(_signalData));
+      });
+
+      peer.on("stream", (stream) => {
+        remotePeerVideoRef.current.srcObject = stream;
+        remotePeerVideoRef.current.play();
+        toast({
+          title: `[recv] Got video stream from  ${remotePeerIDRef.current}`,
+          // description: "We've created your account for you.",
+          status: "success",
+          duration: 10000,
+          isClosable: true,
+        });
+      });
+      peerRef.current = peer;
+    }
+    peerRef.current.signal(signalData);
+  };
+
+  useEffect(() => {
+    // get video/voice stream
+    navigator.mediaDevices
+      .getUserMedia({
+        video: true,
+        audio: true,
+      })
+      .then((stream) => {
+        console.log("Setting stream");
+        streamRef.current = stream;
+
+        videoRef.current.srcObject = stream;
+        videoRef.current.play();
+      })
+      .catch(() => {});
+
+    const socket = new WebSocket("ws://localhost:5100");
+    wsRef.current = socket;
+
+    socket.onopen = () => {};
+
+    socket.onmessage = (msg) => {
+      const message = JSON.parse(msg.data);
+
+      switch (message.eventType) {
+        case "new_user":
+          setCurrentID(message.data);
+          break;
+        case "incoming_call":
+          handleIncomingCall(message);
+          break;
+        case "call_answered":
+          handleCallAnswered(message);
+        default:
+          console.log("Received unknown event type");
+      }
+    };
+
+    return () => {
+      socket.close();
+    };
+  }, []);
 
   return (
     <Box p={6}>
       <Box display="flex" flexDirection="row">
         <Text display="inline">Hello, </Text>
         <Text display="inline" fontWeight={"bold"}>
-          {currentID?.replace(/_/g, " ")}
+          {currentID?.replace(/\s/g, "_")}
         </Text>
       </Box>
       {!isCalling && (
@@ -166,6 +223,24 @@ const VideoChat = () => {
           setRemotePeerID={setRemotePeerID}
         />
       )}
+      <Box mt={2} display="flex" flexDir={"row"}>
+        <Box
+          border="solid 2px red"
+          width={400}
+          height={400}
+          objectFit={"contain"}
+        >
+          <video height="100%" width="100%" ref={videoRef} />
+        </Box>
+        <Box
+          border="solid 2px red"
+          width={400}
+          height={400}
+          objectFit={"contain"}
+        >
+          <video height="100%" width="100%" ref={remotePeerVideoRef} />
+        </Box>
+      </Box>
       {/* {isCalling && (
         <Text display="inline">
           Calling{" "}
