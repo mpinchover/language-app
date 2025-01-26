@@ -1,13 +1,4 @@
-import {
-  Box,
-  Button,
-  Text,
-  Input,
-  Tag,
-  TagLabel,
-  List,
-  ListItem,
-} from "@chakra-ui/react";
+import { Box, Button, Text, Input } from "@chakra-ui/react";
 import { useToast } from "@chakra-ui/react";
 import { useEffect, useRef, useState } from "react";
 import Peer from "simple-peer";
@@ -233,44 +224,4 @@ const VideoChat = () => {
   );
 };
 
-const CATEGORIES = [
-  "Philosophy",
-  "I'm high",
-  "Art",
-  "Traveling",
-  "Techno",
-  "Technology",
-  "Cooking",
-  "Reading",
-  "DIY",
-  "TV series",
-  "Gaming",
-  "Parenting",
-];
-
-// const VideoChat = () => {
-//   return (
-//     <Box p={6}>
-//       <List flexDirection={"column"}>
-//         {CATEGORIES.map((tag, index) => {
-//           return (
-//             <ListItem mb={2}>
-//               <Tag
-//                 // display={"block"}
-//                 key={index}
-//                 colorScheme="blue"
-//                 size="md"
-//                 variant="solid"
-//                 borderRadius="full"
-//               >
-//                 <TagLabel>{tag}</TagLabel>
-//                 {/* <TagCloseButton onClick={() => removeTag(tag)} /> */}
-//               </Tag>
-//             </ListItem>
-//           );
-//         })}
-//       </List>
-//     </Box>
-//   );
-// };
 export default VideoChat;
