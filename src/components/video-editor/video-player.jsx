@@ -43,8 +43,10 @@ const videoURL = "https://storage.googleapis.com/video-editor-uploads/demo.mp4";
 
 const VideoPlayer = ({ saveVideoCut }) => {
   const videoRef = useRef(null);
-  const [duration, setDuration] = useState(0);
+  // const [duration, setDuration] = useState(0);
   const [range, setRange] = useState([0, 0]);
+  const [stableMinValue, setStableMinValue] = useState(0);
+  const [stableMaxValue, setStableMaxValue] = useState(0);
 
   const [displayRange, setDisplayRange] = useState(false);
   const theme = useTheme();
@@ -70,27 +72,29 @@ const VideoPlayer = ({ saveVideoCut }) => {
     if (!video) return;
 
     video.muted = true;
-    const handleTimeUpdate = (e) => {
-      if (video.currentTime >= range[1] && !video.paused) {
-        video.currentTime = range[0];
-      }
-    };
+    // const handleTimeUpdate = (e) => {
+    //   if (video.currentTime >= range[1]) {
+    //     console.log("RESETTING, ", range);
+    //     video.currentTime = range[0];
+    //   }
+    // };
 
-    const handleLoadedMetadata = () => {
-      const vidDur = Math.ceil(video.duration);
-      setDuration(Math.floor(video.duration));
-      setRange([0, vidDur]);
-      video.currentTime = range[0];
-    };
+    // const handleLoadedMetadata = () => {
+    //   const vidDur = video.duration;
+    //   // setDuration(Math.floor(video.duration));
+    //   setRange([0, vidDur]);
+    //   setStableMaxValue(vidDur);
+    //   video.currentTime = range[0];
+    // };
 
-    video.addEventListener("timeupdate", handleTimeUpdate);
-    video.addEventListener("loadedmetadata", handleLoadedMetadata);
+    // video.addEventListener("timeupdate", handleTimeUpdate);
+    // video.addEventListener("loadedmetadata", handleLoadedMetadata);
 
     return () => {
-      video.removeEventListener("timeupdate", handleTimeUpdate);
-      video.removeEventListener("loadedmetadata", handleLoadedMetadata);
+      // video.removeEventListener("timeupdate", handleTimeUpdate);
+      // video.removeEventListener("loadedmetadata", handleLoadedMetadata);
     };
-  }, [range]);
+  }, []);
 
   const onMouseEnterVideo = () => {
     setDisplayRange(true);
@@ -115,7 +119,7 @@ const VideoPlayer = ({ saveVideoCut }) => {
       <video
         ref={videoRef}
         src={videoURL}
-        loop
+        // loop
         muted
         style={{
           height: "100%",
@@ -124,11 +128,13 @@ const VideoPlayer = ({ saveVideoCut }) => {
       />
 
       <Timeline
+        stableMinValue={stableMinValue}
+        stableMaxValue={stableMaxValue}
         range={range}
         setRange={setRange}
-        duration={duration}
         videoRef={videoRef}
         displayRange={displayRange}
+        setStableMaxValue={setStableMaxValue}
       />
       <Box
         display="flex"

@@ -24,14 +24,23 @@ import { v4 as uuidv4 } from "uuid";
 
 const STEP = 0.25 * 4;
 
-const Timeline = ({ displayRange, videoRef, duration, range, setRange }) => {
-  const [minValue, setMinValue] = useState(0); // Left thumb value
-  const [maxValue, setMaxValue] = useState(duration); // Right thumb value
+const Timeline = ({
+  displayRange,
+  videoRef,
+  range,
+  setRange,
+  stableMinValue,
+  stableMaxValue,
+  setStableMaxValue,
+}) => {
   const [playHeadValue, setPlayheadValue] = useState(0); // Right thumb value
   const [isDragging, setIsDragging] = useState(null); // Tracks which thumb is being dragged
   const theme = useTheme();
   const blue500 = theme.colors.blue[600]; // Get the value of "blue.500"
   const [isPlaying, setIsPlaying] = useState(false);
+
+  const minValue = range[0];
+  const maxValue = range[1];
 
   const handleClickPlay = () => {
     if (videoRef.current && videoRef.current.paused) {
@@ -44,17 +53,28 @@ const Timeline = ({ displayRange, videoRef, duration, range, setRange }) => {
   };
 
   useEffect(() => {
-    if (maxValue == 0) {
-      setMaxValue(duration);
-    }
-
     const updatePlayhead = () => {
-      // console.log("IS DRAGGING IS ", isDragging);
-
       if (videoRef.current && isPlaying) {
-        // console.log("setting playhead", isDragging);
-        setPlayheadValue(Math.round(videoRef.current?.currentTime));
+        setPlayheadValue(
+          Math.min(
+            videoRef.current.duration,
+            Math.round(videoRef.current?.currentTime)
+          )
+        );
       }
+    };
+
+    const handleTimeUpdate = (e) => {
+      if (Math.ceil(videoRef.current?.currentTime) > range[1]) {
+        videoRef.current.currentTime = range[0];
+        videoRef.current.play();
+      }
+    };
+
+    const handleEnded = () => {
+      // console.log("VIDEO ENDED");
+      videoRef.current.currentTime = range[0];
+      videoRef.current.play();
     };
 
     const handleMouseMove = (e) => {
@@ -65,25 +85,27 @@ const Timeline = ({ displayRange, videoRef, duration, range, setRange }) => {
         .getBoundingClientRect();
 
       // Calculate the percentage of mouse position within the slider
-      const percentage = Math.max(
-        0,
-        Math.min(1, (e.clientX - sliderRect.left) / sliderRect.width)
+      let percentage = Math.min(
+        Math.max(0, (e.clientX - sliderRect.left) / sliderRect.width),
+        1
       );
 
       // Map percentage to duration and round to the nearest step
-      const value = Math.round((percentage * duration) / STEP) * STEP;
-      if (value === minValue || value == maxValue) {
-        return;
-      }
+      const value = Math.round((percentage * stableMaxValue) / STEP) * STEP;
 
       if (isDragging === "min" && value < maxValue) {
-        setMinValue(value);
         setRange([value, maxValue]);
-        videoRef.current.currentTime = value;
+
+        videoRef.current.currentTime = Math.min(
+          videoRef.current?.duration,
+          value
+        );
       } else if (isDragging === "max" && value > minValue) {
-        setMaxValue(value);
         setRange([minValue, value]);
-        videoRef.current.currentTime = value;
+        videoRef.current.currentTime = Math.min(
+          videoRef.current?.duration,
+          value
+        );
       } else if (
         isDragging === "playhead" &&
         value >= minValue &&
@@ -99,7 +121,6 @@ const Timeline = ({ displayRange, videoRef, duration, range, setRange }) => {
         videoRef.current.currentTime = minValue;
       }
       setIsDragging(null); // Stop dragging
-      // videoRef.current.currentTime = minValue;
       videoRef.current.play();
       setIsPlaying(true);
     };
@@ -109,6 +130,17 @@ const Timeline = ({ displayRange, videoRef, duration, range, setRange }) => {
       setIsPlaying(false);
     };
 
+    const handleLoadedMetadata = () => {
+      const vidDur = Math.ceil(videoRef.current.duration);
+      // setDuration(Math.floor(video.duration));
+      setRange([0, vidDur]);
+      setStableMaxValue(vidDur);
+      videoRef.current.currentTime = range[0];
+    };
+
+    videoRef.current?.addEventListener("loadedmetadata", handleLoadedMetadata);
+    videoRef.current?.addEventListener("timeupdate", handleTimeUpdate);
+    videoRef.current?.addEventListener("ended", handleEnded);
     if (isDragging !== null) {
       document.addEventListener("mousemove", handleMouseMove);
       document.addEventListener("mouseup", handleMouseUp);
@@ -124,20 +156,25 @@ const Timeline = ({ displayRange, videoRef, duration, range, setRange }) => {
       document.removeEventListener("mouseup", handleMouseUp);
       document.removeEventListener("mousedown", handleMouseDown);
       videoRef.current?.removeEventListener("timeupdate", updatePlayhead);
+      videoRef.current?.removeEventListener("timeupdate", handleTimeUpdate);
+      videoRef.current?.removeEventListener("ended", handleEnded);
+      videoRef.current?.removeEventListener(
+        "loadedmetadata",
+        handleLoadedMetadata
+      );
     };
-  }, [isDragging, minValue, maxValue, duration, setRange]);
+  }, [isDragging, range]);
 
+  // console.log("max value is ", maxValue);
+  // console.log("Stable max value ", stableMaxValue);
   // Calculate positions of thumbs as percentages
-  const leftPercentage = (minValue / duration) * 100;
-  const rightPercentage = (maxValue / duration) * 100;
-  const playHeadPercentage = (playHeadValue / duration) * 100;
+  const leftPercentage = (minValue / stableMaxValue) * 100;
+  const rightPercentage = (maxValue / stableMaxValue) * 100;
+  const playHeadPercentage = (playHeadValue / stableMaxValue) * 100;
 
   const handleThumbMouseDown = (thumb) => {
-    // console.log("SETTING THUMB");
     setIsDragging(thumb);
   };
-
-  // console.log(isDragging);
 
   return (
     <Box
