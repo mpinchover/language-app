@@ -15,6 +15,8 @@ import {
 } from "@chakra-ui/react";
 import { useRef, useState, useEffect } from "react";
 import { RxScissors } from "react-icons/rx";
+import { HiMagnifyingGlassPlus } from "react-icons/hi2";
+import { RiArrowGoBackFill } from "react-icons/ri";
 import VideoClipPlayer from "./video-clip-player";
 import { FaPause, FaPlay } from "react-icons/fa";
 import { useTheme } from "@chakra-ui/react";
@@ -23,7 +25,7 @@ import { useRecoilState } from "recoil";
 import { v4 as uuidv4 } from "uuid";
 import Timeline from "./timeline";
 
-const EditButton = ({ displayRange, handleCut }) => {
+const VideoUIButton = ({ displayRange, handleClick, icon }) => {
   return (
     <Box
       style={{
@@ -31,33 +33,19 @@ const EditButton = ({ displayRange, handleCut }) => {
         transition: "opacity 0.3s ease-in-out", // Smooth transition
         pointerEvents: displayRange ? "auto" : "none", // Disable interaction when hidden
       }}
-      position="absolute"
-      right="50px"
-      top="50px"
     >
-      <Button onClick={handleCut}>
-        <RxScissors />
-      </Button>
+      <Button onClick={handleClick}>{icon}</Button>
     </Box>
   );
 };
 
-const STEP = 0.25;
-const videoURL =
-  "https://storage.googleapis.com/video-editor-uploads/demo_1.mp4";
+const videoURL = "https://storage.googleapis.com/video-editor-uploads/demo.mp4";
 
 const VideoPlayer = ({ saveVideoCut }) => {
   const videoRef = useRef(null);
-  const sliderRef = useRef(null); // Ref for the input slider
   const [duration, setDuration] = useState(0);
   const [range, setRange] = useState([0, 0]);
-  const [overlays, setOverlays] = useState([]);
-  const [isDragging, setIsDragging] = useState(false);
-  const [startPos, setStartPos] = useState({ x: 0, y: 0 });
-  const [newOverlay, setNewOverlay] = useState(null);
-  const [isPlaying, setIsPlaying] = useState(false);
 
-  const [videoClips, setVideoClips] = useState([]);
   const [displayRange, setDisplayRange] = useState(false);
   const theme = useTheme();
   const blue500 = theme.colors.blue[600]; // Get the value of "blue.500"
@@ -131,7 +119,6 @@ const VideoPlayer = ({ saveVideoCut }) => {
         muted
         style={{
           height: "100%",
-
           objectFit: "contain",
         }}
       />
@@ -143,7 +130,30 @@ const VideoPlayer = ({ saveVideoCut }) => {
         videoRef={videoRef}
         displayRange={displayRange}
       />
-      <EditButton handleCut={handleCut} displayRange={displayRange} />
+      <Box
+        display="flex"
+        flexDirection="column"
+        gap="10px"
+        position="absolute"
+        right="50px"
+        top="50px"
+      >
+        <VideoUIButton
+          icon={<RxScissors />}
+          handleClick={handleCut}
+          displayRange={displayRange}
+        />
+        <VideoUIButton
+          icon={<HiMagnifyingGlassPlus />}
+          handleClick={handleCut}
+          displayRange={displayRange}
+        />
+        <VideoUIButton
+          icon={<RiArrowGoBackFill />}
+          handleClick={handleCut}
+          displayRange={displayRange}
+        />
+      </Box>
     </Box>
   );
 };

@@ -1,3 +1,10 @@
+next steps
+ - add a magnifying glass button to zoom in to the markers
+ - allow multiple cuts
+ - final page should be a page that shows all the gifs with links.
+  - have a button to copy the link
+  - link shouold be small
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
