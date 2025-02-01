@@ -11,7 +11,10 @@ import {
 import { MdDelete } from "react-icons/md";
 function VideoClipPlayer({ src, startTime, endTime, idx, removeVideoClip }) {
   const videoRef = useRef(null);
-
+  const handleEnded = () => {
+    videoRef.current.currentTime = startTime;
+    videoRef.current.play();
+  };
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
@@ -19,8 +22,9 @@ function VideoClipPlayer({ src, startTime, endTime, idx, removeVideoClip }) {
     video.muted = true;
 
     const handleTimeUpdate = (e) => {
-      if (video.currentTime >= endTime && !video.paused) {
-        video.currentTime = startTime;
+      if (Math.ceil(videoRef.current?.currentTime) > endTime) {
+        videoRef.current.currentTime = startTime;
+        videoRef.current.play();
       }
     };
 
@@ -55,7 +59,8 @@ function VideoClipPlayer({ src, startTime, endTime, idx, removeVideoClip }) {
         ref={videoRef}
         autoPlay={true}
         src={src}
-        loop={true}
+        // loop={true}
+        onEnded={handleEnded}
         style={{
           width: "100%",
           height: "100%",
