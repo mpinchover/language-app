@@ -29,15 +29,17 @@ const Timeline = ({
   videoRef,
   range,
   setRange,
-  stableMinValue,
-  stableMaxValue,
-  setStableMaxValue,
+  setVideoDuration,
+  videoDuration,
+  playheadValue,
+  setPlayheadValue,
+  isPlaying,
+  setIsPlaying,
+  isDragging,
+  setIsDragging,
 }) => {
-  const [playHeadValue, setPlayheadValue] = useState(0); // Right thumb value
-  const [isDragging, setIsDragging] = useState(null); // Tracks which thumb is being dragged
   const theme = useTheme();
   const blue500 = theme.colors.blue[600]; // Get the value of "blue.500"
-  const [isPlaying, setIsPlaying] = useState(false);
 
   const minValue = range[0];
   const maxValue = range[1];
@@ -56,10 +58,7 @@ const Timeline = ({
     const updatePlayhead = () => {
       if (videoRef.current && isPlaying) {
         setPlayheadValue(
-          Math.min(
-            videoRef.current.duration,
-            Math.round(videoRef.current?.currentTime)
-          )
+          Math.min(videoDuration, Math.round(videoRef.current?.currentTime))
         );
       }
     };
@@ -91,21 +90,15 @@ const Timeline = ({
       );
 
       // Map percentage to duration and round to the nearest step
-      const value = Math.round((percentage * stableMaxValue) / STEP) * STEP;
+      const value = Math.round((percentage * videoDuration) / STEP) * STEP;
 
       if (isDragging === "min" && value < maxValue) {
         setRange([value, maxValue]);
 
-        videoRef.current.currentTime = Math.min(
-          videoRef.current?.duration,
-          value
-        );
+        videoRef.current.currentTime = Math.min(videoDuration, value);
       } else if (isDragging === "max" && value > minValue) {
         setRange([minValue, value]);
-        videoRef.current.currentTime = Math.min(
-          videoRef.current?.duration,
-          value
-        );
+        videoRef.current.currentTime = Math.min(videoDuration, value);
       } else if (
         isDragging === "playhead" &&
         value >= minValue &&
@@ -134,7 +127,7 @@ const Timeline = ({
       const vidDur = Math.ceil(videoRef.current.duration);
       // setDuration(Math.floor(video.duration));
       setRange([0, vidDur]);
-      setStableMaxValue(vidDur);
+      setVideoDuration(vidDur);
       videoRef.current.currentTime = range[0];
     };
 
@@ -165,12 +158,9 @@ const Timeline = ({
     };
   }, [isDragging, range]);
 
-  // console.log("max value is ", maxValue);
-  // console.log("Stable max value ", stableMaxValue);
-  // Calculate positions of thumbs as percentages
-  const leftPercentage = (minValue / stableMaxValue) * 100;
-  const rightPercentage = (maxValue / stableMaxValue) * 100;
-  const playHeadPercentage = (playHeadValue / stableMaxValue) * 100;
+  const leftPercentage = (minValue / videoDuration) * 100;
+  const rightPercentage = (maxValue / videoDuration) * 100;
+  const playHeadPercentage = (playheadValue / videoDuration) * 100;
 
   const handleThumbMouseDown = (thumb) => {
     setIsDragging(thumb);

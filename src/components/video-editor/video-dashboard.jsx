@@ -52,7 +52,7 @@ const VideoDashboard = () => {
               borderBottom: "none", // Remove any underline if it persists
             }}
           >
-            Edit
+            Text
           </Tab>
           <Tab
             _selected={{
@@ -60,7 +60,7 @@ const VideoDashboard = () => {
               borderBottom: "none", // Remove any underline if it persists
             }}
           >
-            Preview
+            Generate
           </Tab>
         </TabList>
 

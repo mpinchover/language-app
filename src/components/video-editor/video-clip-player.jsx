@@ -11,10 +11,12 @@ import {
 import { MdDelete } from "react-icons/md";
 function VideoClipPlayer({ src, startTime, endTime, idx, removeVideoClip }) {
   const videoRef = useRef(null);
+
   const handleEnded = () => {
     videoRef.current.currentTime = startTime;
     videoRef.current.play();
   };
+  
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;

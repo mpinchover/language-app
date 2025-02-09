@@ -45,8 +45,13 @@ const VideoPlayer = ({ saveVideoCut }) => {
   const videoRef = useRef(null);
   // const [duration, setDuration] = useState(0);
   const [range, setRange] = useState([0, 0]);
-  const [stableMinValue, setStableMinValue] = useState(0);
-  const [stableMaxValue, setStableMaxValue] = useState(0);
+  const [startTime, setStartTime] = useState(0);
+  const [endTime, setEndTime] = useState(0);
+  const [ranges, setRanges] = useState([]);
+  const [playheadValue, setPlayheadValue] = useState(0); // Right thumb value
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isDragging, setIsDragging] = useState(null); // Tracks which thumb is being dragged
+  const [videoDuration, setVideoDuration] = useState(0);
 
   const [displayRange, setDisplayRange] = useState(false);
   const theme = useTheme();
@@ -67,34 +72,24 @@ const VideoPlayer = ({ saveVideoCut }) => {
     // setRange([1, videoRef.current.duration]);
   };
 
+  // you probably need to set the range to 0, duratin and then use some offset
+  //
+  const handleZoomIn = () => {
+    const _startTime = range[0];
+    const _endTime = range[1];
+    const newDuration = _endTime - _startTime;
+
+    setVideoDuration(newDuration);
+    setRange([0, newDuration]);
+    videoRef.current.currentTime = _startTime;
+  };
+
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
 
     video.muted = true;
-    // const handleTimeUpdate = (e) => {
-    //   if (video.currentTime >= range[1]) {
-    //     console.log("RESETTING, ", range);
-    //     video.currentTime = range[0];
-    //   }
-    // };
-
-    // const handleLoadedMetadata = () => {
-    //   const vidDur = video.duration;
-    //   // setDuration(Math.floor(video.duration));
-    //   setRange([0, vidDur]);
-    //   setStableMaxValue(vidDur);
-    //   video.currentTime = range[0];
-    // };
-
-    // video.addEventListener("timeupdate", handleTimeUpdate);
-    // video.addEventListener("loadedmetadata", handleLoadedMetadata);
-
-    return () => {
-      // video.removeEventListener("timeupdate", handleTimeUpdate);
-      // video.removeEventListener("loadedmetadata", handleLoadedMetadata);
-    };
-  }, []);
+  }, [videoDuration]);
 
   const onMouseEnterVideo = () => {
     setDisplayRange(true);
@@ -128,13 +123,22 @@ const VideoPlayer = ({ saveVideoCut }) => {
       />
 
       <Timeline
-        stableMinValue={stableMinValue}
-        stableMaxValue={stableMaxValue}
+        videoDuration={videoDuration}
+        setVideoDuration={setVideoDuration}
         range={range}
         setRange={setRange}
         videoRef={videoRef}
         displayRange={displayRange}
-        setStableMaxValue={setStableMaxValue}
+        playheadValue={playheadValue}
+        setPlayheadValue={setPlayheadValue}
+        isPlaying={isPlaying}
+        setIsPlaying={setIsPlaying}
+        isDragging={isDragging}
+        setIsDragging={setIsDragging}
+        startTime={startTime}
+        setStartTime={setStartTime}
+        endTime={endTime}
+        setEndTime={setEndTime}
       />
       <Box
         display="flex"
@@ -151,7 +155,7 @@ const VideoPlayer = ({ saveVideoCut }) => {
         />
         <VideoUIButton
           icon={<HiMagnifyingGlassPlus />}
-          handleClick={handleCut}
+          handleClick={handleZoomIn}
           displayRange={displayRange}
         />
         <VideoUIButton
