@@ -15,6 +15,7 @@ import { GiChefToque } from "react-icons/gi";
 import { TbChefHat } from "react-icons/tb";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../auth/auth-context";
+import { MdLightbulbOutline } from "react-icons/md";
 
 const Navbar = ({ onSearch }) => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -41,7 +42,7 @@ const Navbar = ({ onSearch }) => {
         alignItems="center"
       >
         {/* Left: Logo */}
-        <TbChefHat
+        <MdLightbulbOutline
           cursor={"pointer"}
           fontSize={28}
           onClick={() => {
@@ -51,25 +52,28 @@ const Navbar = ({ onSearch }) => {
 
         {/* Middle: Search Bar */}
         <Box flex="1" mx="4">
-          <InputGroup>
+          <InputGroup height="60px">
             <Input
-              placeholder="Search for food or ingredients..."
+              height="60px"
+              placeholder="Find what's in, out and around the Earth."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               borderRadius="md"
               bg="white"
               borderColor="gray.300"
+              pr="5.5rem" // make space for the button
             />
-            <InputRightElement width="4.5rem">
-              <Button
-                h="1.75rem"
-                size="sm"
-                mr="2"
-                colorScheme="blue"
-                onClick={handleSearch}
-              >
-                Search
-              </Button>
+            <InputRightElement height="100%" width="5.5rem">
+              <Flex height="100%" alignItems="center" justifyContent="center">
+                <Button
+                  height="32px"
+                  size="sm"
+                  colorScheme="blue"
+                  onClick={handleSearch}
+                >
+                  Search
+                </Button>
+              </Flex>
             </InputRightElement>
           </InputGroup>
         </Box>
