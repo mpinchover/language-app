@@ -11,10 +11,9 @@ import {
   Box,
   ButtonGroup,
   Text,
+  Link,
 } from "@chakra-ui/react";
 import { FaComment } from "react-icons/fa";
-import { PiCookingPotFill } from "react-icons/pi";
-import { FaCaretUp } from "react-icons/fa6";
 import { PiCaretDoubleUp } from "react-icons/pi";
 
 const Post = ({
@@ -36,7 +35,7 @@ const Post = ({
               <Text fontSize="xs">{author}</Text>
               <Heading size="md">{postTitle}</Heading>
               <Box>
-                <Text fontWeight={"bold"} fontSize="xs">
+                <Text fontWeight="bold" fontSize="xs">
                   {publishedAt}
                 </Text>
               </Box>
@@ -59,9 +58,20 @@ const Post = ({
             border="1px solid"
             borderColor="gray.200"
           >
-            <Text fontSize="md" lineHeight="tall" color="gray.800">
+            <Text fontSize="md" lineHeight="tall" color="gray.800" mb="2">
               {description}
             </Text>
+
+            {/* AP News Link */}
+            <Link
+              href={articleSrc}
+              isExternal
+              fontSize="sm"
+              color="blue.500"
+              fontWeight="medium"
+            >
+              AP News
+            </Link>
           </Box>
         </Stack>
       </CardBody>
@@ -74,7 +84,7 @@ const Post = ({
                 <Text fontSize="sm" fontWeight="bold">
                   25
                 </Text>
-                <PiCaretDoubleUp fontWeight={"bold"} />
+                <PiCaretDoubleUp fontWeight="bold" />
               </HStack>
             </Box>
             <Box as={Button}>
