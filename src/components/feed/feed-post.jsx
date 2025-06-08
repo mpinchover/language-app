@@ -6,85 +6,80 @@ import {
   Heading,
   HStack,
   Stack,
-  Wrap,
-  Tag,
   Button,
-  Divider,
   CardFooter,
-  WrapItem,
   Box,
   ButtonGroup,
   Text,
 } from "@chakra-ui/react";
-import { useState } from "react";
 import { FaComment } from "react-icons/fa";
 import { PiCookingPotFill } from "react-icons/pi";
+import { FaCaretUp } from "react-icons/fa6";
+import { PiCaretDoubleUp } from "react-icons/pi";
 
-const MAX_VISIBLE_TAGS = 6;
-
-const Post = ({ avatarPicture, postTitle, imgSrc, description, tags }) => {
-  const [showAllTags, setShowAllTags] = useState(false);
-
-  const handleToggleTags = () => {
-    setShowAllTags((prev) => !prev);
-  };
-
+const Post = ({
+  avatarPicture,
+  postTitle,
+  imgSrc,
+  description,
+  author,
+  publishedAt,
+  articleSrc,
+}) => {
   return (
-    <Card maxW="xl" width="full" boxShadow={"none"}>
+    <Card maxW="xl" width="full" boxShadow="none">
       <CardBody>
-        <Stack mt="6" spacing="3">
+        <Stack mt="6" spacing="4">
           <HStack>
             <Avatar src={avatarPicture} />
-            <Heading size="md">{postTitle}</Heading>
+            <Box display="flex" flexDir={"column"}>
+              <Text fontSize="xs">{author}</Text>
+              <Heading size="md">{postTitle}</Heading>
+              <Box>
+                <Text fontWeight={"bold"} fontSize="xs">
+                  {publishedAt}
+                </Text>
+              </Box>
+            </Box>
           </HStack>
 
           <Image
             maxHeight="400"
             objectFit="cover"
             src={imgSrc}
-            alt="Green double couch with wooden legs"
+            alt="Post image"
             borderRadius="lg"
           />
 
-          {/* <Text>{description}</Text> */}
-          <Wrap spacing="2">
-            {(showAllTags ? tags : tags.slice(0, MAX_VISIBLE_TAGS)).map(
-              (tag, index) => (
-                <WrapItem key={index}>
-                  <Tag>{tag}</Tag>
-                </WrapItem>
-              )
-            )}
-          </Wrap>
-          {tags.length > MAX_VISIBLE_TAGS && (
-            <Box mt="2" textAlign="left">
-              <Button
-                size="sm"
-                onClick={handleToggleTags}
-                variant="link"
-                colorScheme="blue"
-              >
-                {showAllTags ? "Show Less" : "Show More"}
-              </Button>
-            </Box>
-          )}
+          {/* Styled Description */}
+          <Box
+            bg="gray.50"
+            p="4"
+            borderRadius="md"
+            border="1px solid"
+            borderColor="gray.200"
+          >
+            <Text fontSize="md" lineHeight="tall" color="gray.800">
+              {description}
+            </Text>
+          </Box>
         </Stack>
       </CardBody>
 
-      <CardFooter flexDir={"column"}>
+      <CardFooter flexDir="column">
         <Stack spacing="3">
           <ButtonGroup spacing="2">
             <Box as={Button}>
               <HStack spacing={2}>
-                <Text fontSize="sm" fontWeight={"bold"}>
+                <Text fontSize="sm" fontWeight="bold">
                   25
                 </Text>
-                <PiCookingPotFill />
+                <PiCaretDoubleUp fontWeight={"bold"} />
               </HStack>
             </Box>
             <Box as={Button}>
               <HStack spacing={2}>
-                <Text fontSize="sm" fontWeight={"bold"}>
+                <Text fontSize="sm" fontWeight="bold">
                   2
                 </Text>
                 <FaComment />

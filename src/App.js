@@ -33,9 +33,9 @@ function App() {
             <Route
               path="/"
               element={
-                <ProtectedRoute>
-                  <Feed />
-                </ProtectedRoute>
+                // <ProtectedRoute>
+                <Feed />
+                // </ProtectedRoute>
               }
             />
             <Route
