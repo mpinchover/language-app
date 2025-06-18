@@ -24,11 +24,12 @@ const Post = ({
   author,
   publishedAt,
   articleSrc,
+  followUpQuestions,
 }) => {
   return (
-    <Card maxW="xl" width="full" boxShadow="none">
+    <Card maxW="xl" width="full" boxShadow="none" mb="6">
       <CardBody>
-        <Stack mt="6" spacing="4">
+        <Stack spacing="4">
           <HStack>
             <Avatar src={avatarPicture} />
             <Box display="flex" flexDir={"column"}>
@@ -61,22 +62,51 @@ const Post = ({
             <Text fontSize="md" lineHeight="tall" color="gray.800" mb="2">
               {description}
             </Text>
+            {/* {followUpQuestions && followUpQuestions.length > 0 && (
+              <Box mt={4}>
+                <Stack spacing={2}>
+                  {followUpQuestions.map((question, idx) => (
+                    <Box
+                      key={idx}
+                      p={3}
+                      bg="white"
+                      border="1px solid"
+                      borderColor="gray.200"
+                      borderRadius="md"
+                      shadow="xs"
+                      cursor="pointer"
+                      transition="all 0.15s ease-in-out"
+                      _hover={{
+                        bg: "gray.50",
+                        borderColor: "gray.300",
+                        shadow: "xs",
+                      }}
+                    >
+                      <Text fontSize="sm" color="gray.800">
+                        {question}
+                      </Text>
+                    </Box>
+                  ))}
+                </Stack>
+              </Box>
+            )} */}
 
-            {/* AP News Link */}
-            <Link
-              href={articleSrc}
-              isExternal
-              fontSize="sm"
-              color="blue.500"
-              fontWeight="medium"
-            >
-              AP News
-            </Link>
+            <Box mt={2}>
+              <Link
+                href={articleSrc}
+                isExternal
+                fontSize="sm"
+                color="blue.500"
+                fontWeight="medium"
+              >
+                Full article
+              </Link>
+            </Box>
           </Box>
         </Stack>
       </CardBody>
 
-      <CardFooter flexDir="column">
+      {/* <CardFooter flexDir="column">
         <Stack spacing="3">
           <ButtonGroup spacing="2">
             <Box as={Button}>
@@ -97,7 +127,7 @@ const Post = ({
             </Box>
           </ButtonGroup>
         </Stack>
-      </CardFooter>
+      </CardFooter> */}
     </Card>
   );
 };

@@ -64,12 +64,12 @@ const Feed = () => {
             <FeedPost
               articleSrc={post.articleSrc}
               publishedAt={post.publishedAt}
-              author={post.author}
+              author={post.username}
               postTitle={post.title}
               imgSrc={post.media_url}
               description={post.text}
-              avatarPicture={post.avatarPicture}
-              tags={post.tags}
+              avatarPicture={post.profile_picture_url}
+              followUpQuestions={post.follow_up_questions}
             />
             {index < posts.length - 1 && <Divider />}
           </Box>

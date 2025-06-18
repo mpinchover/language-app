@@ -14,6 +14,7 @@ import ProtectedRoute from "./auth/protected-route";
 import PublicRoute from "./auth/public-route";
 import VideoDashboard from "./components/video-editor/video-dashboard";
 import VideoChat from "./components/video-chat";
+import Translate from "./components/translation/translate";
 
 function App() {
   const location = useLocation();
@@ -91,6 +92,15 @@ function App() {
               element={
                 // <PublicRoute>
                 <VideoDashboard />
+                // </PublicRoute>
+              }
+            />
+
+            <Route
+              path="/translate"
+              element={
+                // <PublicRoute>
+                <Translate />
                 // </PublicRoute>
               }
             />
