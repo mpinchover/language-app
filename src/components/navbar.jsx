@@ -148,6 +148,12 @@ const Navbar = ({ onSearch }) => {
           <MenuItem onClick={() => navigate("/my-posts")}>My posts</MenuItem>
 
           <MenuItem onClick={() => navigate("/account")}>Account</MenuItem>
+          <MenuItem onClick={() => navigate("/translate")}>
+            New translation
+          </MenuItem>
+          <MenuItem onClick={() => navigate("/past-translations")}>
+            Past Translations
+          </MenuItem>
           <MenuItem onClick={logOut}>Logout</MenuItem>
         </MenuList>
       </Menu>

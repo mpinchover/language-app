@@ -15,6 +15,7 @@ import PublicRoute from "./auth/public-route";
 import VideoDashboard from "./components/video-editor/video-dashboard";
 import VideoChat from "./components/video-chat";
 import Translate from "./components/translation/translate";
+import PastTranslations from "./components/translation/past-translations";
 
 function App() {
   const location = useLocation();
@@ -101,6 +102,15 @@ function App() {
               element={
                 // <PublicRoute>
                 <Translate />
+                // </PublicRoute>
+              }
+            />
+            <Route
+              path="/past-translations"
+              element={
+                // <PublicRoute>
+                <PastTranslations />
+                // <VideoDashboard />
                 // </PublicRoute>
               }
             />
