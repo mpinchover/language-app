@@ -100,9 +100,9 @@ function App() {
             <Route
               path="/translate"
               element={
-                // <PublicRoute>
-                <Translate />
-                // </PublicRoute>
+                <ProtectedRoute>
+                  <Translate />
+                </ProtectedRoute>
               }
             />
             <Route

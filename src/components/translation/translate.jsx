@@ -16,6 +16,7 @@ import {
 } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
 import fakeData from "./generate-translation.json";
+import { getAuth } from "firebase/auth";
 
 const Translate = () => {
   const [showIntake, setShowIntake] = useState(true);
@@ -29,30 +30,36 @@ const Translate = () => {
   const [boxRight, setBoxRight] = useState([]);
   const [articleContent, setArticleContent] = useState();
   const [machineGeneratedData, setMachineGeneratedData] = useState(fakeData);
+  const auth = getAuth();
+
   // console.log("MDG: ", machineGeneratedData);
   const getData = async () => {
+    const user = auth.currentUser;
+    const idToken = await user.getIdToken(); // this is what you need
+
     try {
-      //   setLoading(true);
-      //   const response = await fetch(
-      //     "http://127.0.0.1:5000/api/translate-article",
-      //     {
-      //       method: "POST",
-      //       headers: {
-      //         "Content-Type": "application/json",
-      //       },
-      //       body: JSON.stringify({
-      //         article_content: articleContent,
-      //       }),
-      //     }
-      //   );
+      setLoading(true);
+      const response = await fetch(
+        "http://127.0.0.1:5000/api/translate-article",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${idToken}`,
+          },
+          body: JSON.stringify({
+            article_content: articleContent,
+          }),
+        }
+      );
 
-      //   if (!response.ok) {
-      //     throw new Error(`HTTP error! status: ${response.status}`);
-      //   }
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
 
-      //   const data = await response.json();
-      //   setMachineGeneratedData(data);
-      //   console.log("Response:", data);
+      const data = await response.json();
+      setMachineGeneratedData(data);
+      // console.log("Response:", data);
       setShowIntake(false);
     } catch (error) {
       console.error("Error:", error);
@@ -110,92 +117,91 @@ const Translate = () => {
 
   if (showIntake) {
     return (
-      <Box p={12}>
-        <Tabs variant="unstyled">
-          <TabList>
-            <Tab _selected={{ bg: "gray.200", borderRadius: "md" }}>Text</Tab>
-            <Tab _selected={{ bg: "gray.200", borderRadius: "md" }}>
-              Use Link
-            </Tab>
-          </TabList>
-          <TabPanels>
-            <TabPanel p={0} mt={4}>
-              <Textarea
-                resize="none"
-                placeholder="Paste article text here..."
-                value={articleContent}
-                onChange={(e) => setArticleContent(e.target.value)}
-                size="md"
-                height="200px"
-              />
-              <Button
-                mt={4}
-                colorScheme="blue"
-                isLoading={loading}
-                onClick={getData}
-              >
-                Generate
-              </Button>
-            </TabPanel>
-            <TabPanel p={0} mt={4}>
-              <Input
-                padding={6}
-                placeholder="Paste link to news article"
-                value={inputLink}
-                onChange={(e) => setInputLink(e.target.value)}
-                size="md"
-              />
-              <Button
-                mt={4}
-                colorScheme="blue"
-                isLoading={loading}
-                onClick={() => {
-                  setLoading(true);
-                  console.log("Generating from link:", inputLink);
-                  setTimeout(() => {
-                    setShowIntake(false);
-                    setLoading(false);
-                  }, 1000);
-                }}
-              >
-                Generate
-              </Button>
-            </TabPanel>
-          </TabPanels>
-        </Tabs>
+      <Box
+        maxW="3xl"
+        mx="auto"
+        mt={12}
+        p={8}
+        borderWidth={1}
+        borderRadius="xl"
+        boxShadow="lg"
+      >
+        <VStack spacing={6} align="stretch">
+          <Text fontSize="xl" fontWeight="semibold">
+            Paste an article to translate
+          </Text>
+          <Text fontSize="sm" color="gray.500">
+            Enter the full article text below. We’ll analyze and simplify it
+            into multiple reading levels.
+          </Text>
+          <Textarea
+            placeholder="Paste article text here..."
+            resize="none"
+            value={articleContent}
+            onChange={(e) => setArticleContent(e.target.value)}
+            size="md"
+            height="200px"
+          />
+          <Button
+            colorScheme="blue"
+            alignSelf="flex-end"
+            isLoading={loading}
+            onClick={getData}
+          >
+            Generate Translation
+          </Button>
+        </VStack>
       </Box>
     );
   }
 
-  const renderBoxContent = (boxData) =>
-    boxData?.map((sentence, i) => (
-      <Box key={i} mb={10} dir="rtl" maxW="100%" whiteSpace="normal">
-        <Box display="flex" flexWrap="wrap">
-          {sentence.map(({ he, nikud, en }, j) => (
-            <Tooltip
-              key={`he-${j}`}
-              label={
-                <Box p={4}>
-                  <Text fontSize={30} color="blue.300">
-                    {nikud}
-                  </Text>
-                  <Text fontSize={30} color="gray.300">
-                    {en}
-                  </Text>
-                </Box>
-              }
-              placement="top"
-              hasArrow
-              bg="white"
-            >
-              <Box fontSize={30} as="span" mx={1} cursor="pointer">
-                {he}
+  const renderBoxContent = (boxData) => (
+    <Box
+      p={4}
+      borderWidth={1}
+      borderRadius="xl"
+      bg="white"
+      boxShadow="sm"
+      maxW="100%"
+      dir="rtl"
+    >
+      <Box display="flex" flexWrap="wrap" gap={2} lineHeight="2.5rem">
+        {boxData.flat().map(({ he, nikud, en }, j) => (
+          <Tooltip
+            key={`he-${j}`}
+            label={
+              <Box p={2}>
+                <Text fontSize="md" color="blue.500">
+                  {nikud}
+                </Text>
+                <Text fontSize="sm" color="gray.600">
+                  {en}
+                </Text>
               </Box>
-            </Tooltip>
-          ))}
-        </Box>
+            }
+            placement="top"
+            hasArrow
+            bg="gray.100"
+            color="black"
+            borderRadius="md"
+            boxShadow="md"
+          >
+            <Box
+              as="span"
+              fontSize="xl"
+              px={2}
+              py={1}
+              _hover={{ bg: "gray.100" }}
+              borderRadius="md"
+              cursor="pointer"
+            >
+              {he}
+            </Box>
+          </Tooltip>
+        ))}
       </Box>
-    ));
+    </Box>
+  );
 
   return (
     <Box>
