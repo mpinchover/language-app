@@ -15,7 +15,7 @@ import {
   Select,
 } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
-import fakeData from "./generate-translation.json";
+// import fakeData from "./generate-translation.json";
 import { getAuth } from "firebase/auth";
 
 const Translate = () => {
@@ -29,7 +29,7 @@ const Translate = () => {
   const [boxLeft, setBoxLeft] = useState([]);
   const [boxRight, setBoxRight] = useState([]);
   const [articleContent, setArticleContent] = useState();
-  const [machineGeneratedData, setMachineGeneratedData] = useState(fakeData);
+  const [machineGeneratedData, setMachineGeneratedData] = useState({});
   const auth = getAuth();
 
   // console.log("MDG: ", machineGeneratedData);
@@ -40,7 +40,7 @@ const Translate = () => {
     try {
       setLoading(true);
       const response = await fetch(
-        "http://127.0.0.1:5000/api/translate-article",
+        "http://127.0.0.1:5005/api/translate-article",
         {
           method: "POST",
           headers: {
@@ -59,7 +59,7 @@ const Translate = () => {
 
       const data = await response.json();
       setMachineGeneratedData(data);
-      // console.log("Response:", data);
+      console.log("Response:", data);
       setShowIntake(false);
     } catch (error) {
       console.error("Error:", error);
@@ -112,8 +112,8 @@ const Translate = () => {
   };
 
   useEffect(() => {
-    generateAllSentences();
-  }, []);
+    if (!machineGeneratedData) generateAllSentences();
+  }, [machineGeneratedData]);
 
   if (showIntake) {
     return (

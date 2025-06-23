@@ -8,30 +8,50 @@ import {
 } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
 import { CloseIcon } from "@chakra-ui/icons";
-import fakeJson from "./past-translations-da.json";
+import { getAuth } from "firebase/auth";
+// import fakeJson from "./past-translations-da.json";
 
 const PastTranslations = () => {
-  const [translations, setTranslations] = useState(fakeJson["translations"]);
+  const [translations, setTranslations] = useState([]);
+  const auth = getAuth();
+  const user = auth.currentUser;
 
-  useEffect(() => {
-    fetch("http://localhost:5000/api/get-translations")
+  const getPastTranslations = async () => {
+    const idToken = await user.getIdToken(); // this is what you need
+
+    fetch("http://localhost:5005/api/get-translations", {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${idToken}`,
+      },
+    })
       .then((res) => res.json())
       .then((data) => {
-        setTranslations(data);
+        console.log("Got back data ", data);
+        setTranslations(data["translations"]);
       })
       .catch((err) => {
         console.error("Failed to fetch translations:", err);
       });
+  };
+
+  useEffect(() => {
+    getPastTranslations();
   }, []);
 
-  const handleDelete = (e, idx) => {
+  const handleDelete = async (e, item, idx) => {
     e.stopPropagation();
-    fetch(`http://localhost:5000/api/delete-translation/${e.uuid}`, {
+    const idToken = await user.getIdToken(); // this is what you need
+    fetch(`http://localhost:5005/api/delete-translation/${item.uuid}`, {
       method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${idToken}`,
+      },
     })
       .then((res) => res.json())
       .then(() => {
-        setTranslations((prev) => prev.filter((t) => t.uuid !== e.uuid));
+        setTranslations((prev) => prev.filter((t) => t.uuid !== item.uuid));
       })
       .catch((err) => {
         console.error("Failed to delete translation:", err);
@@ -69,7 +89,7 @@ const PastTranslations = () => {
                 colorScheme="red"
                 variant="ghost"
                 aria-label="Delete"
-                onClick={(e) => handleDelete(e, idx)}
+                onClick={(e) => handleDelete(e, item, idx)}
               />
             </HStack>
             <VStack align="start" spacing={2}>

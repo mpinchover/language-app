@@ -108,10 +108,9 @@ function App() {
             <Route
               path="/past-translations"
               element={
-                // <PublicRoute>
-                <PastTranslations />
-                // <VideoDashboard />
-                // </PublicRoute>
+                <ProtectedRoute>
+                  <PastTranslations />
+                </ProtectedRoute>
               }
             />
           </Routes>
