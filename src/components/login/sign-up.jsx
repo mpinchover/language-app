@@ -15,7 +15,7 @@ import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { STATE_SIGN_IN } from "./constants";
 
 const SignUp = ({ setLoginState }) => {
-  const { signUp } = useAuth();
+  const { signUp, handleSigninWithGoogle } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -58,6 +58,10 @@ const SignUp = ({ setLoginState }) => {
       />
       <Button colorScheme="blue" onClick={handleSignUp}>
         Sign up
+      </Button>
+
+      <Button colorScheme="red" onClick={handleSigninWithGoogle} mb={4}>
+        Sign in with Google
       </Button>
 
       {/* Call to action */}

@@ -12,15 +12,14 @@ import {
 } from "@chakra-ui/react";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { STATE_FORGOT_PASSWORD, STATE_SIGN_UP } from "./constants";
+import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 
 const SignIn = ({ setLoginState }) => {
-  const { logIn } = useAuth();
+  const { logIn, handleSigninWithGoogle } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
-
   const toast = useToast();
-  //   const [error, setError] = useState("");
 
   const handleLogIn = async () => {
     try {
@@ -43,18 +42,22 @@ const SignIn = ({ setLoginState }) => {
         placeholder="Email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
+        mb={2}
       />
       <Input
         type="password"
         placeholder="Password"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
+        mb={4}
       />
-      <Button colorScheme="blue" onClick={handleLogIn}>
+      <Button colorScheme="blue" onClick={handleLogIn} mb={2}>
         Log In
       </Button>
+      <Button colorScheme="red" onClick={handleSigninWithGoogle} mb={4}>
+        Sign in with Google
+      </Button>
 
-      {/* Call to action */}
       <Text textAlign="center" fontSize="sm" color="gray.500">
         <Text
           as="span"

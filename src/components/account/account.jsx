@@ -39,7 +39,7 @@ const Account = () => {
         </Heading> */}
 
         {/* Username Field */}
-        <FormControl id="username">
+        {/* <FormControl id="username">
           <FormLabel fontWeight="bold">Username</FormLabel>
           <Input
             type="text"
@@ -49,7 +49,7 @@ const Account = () => {
             borderColor="gray.300"
             focusBorderColor="blue.500"
           />
-        </FormControl>
+        </FormControl> */}
 
         {/* Email Field */}
         <FormControl id="email">
@@ -81,7 +81,7 @@ const Account = () => {
           Update Account
         </Button>
 
-        <Button onClick={handleCancel}>Cancel</Button>
+        {/* <Button onClick={handleCancel}>Cancel</Button> */}
       </Stack>
     </Box>
   );

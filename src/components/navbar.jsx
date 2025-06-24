@@ -144,10 +144,10 @@ const Navbar = ({ onSearch }) => {
           M P
         </MenuButton>
         <MenuList>
-          <MenuItem>Messages</MenuItem>
-          <MenuItem onClick={() => navigate("/my-posts")}>My posts</MenuItem>
+          {/* <MenuItem>Messages</MenuItem> */}
+          {/* <MenuItem onClick={() => navigate("/my-posts")}>My posts</MenuItem> */}
 
-          <MenuItem onClick={() => navigate("/account")}>Account</MenuItem>
+          {/* <MenuItem onClick={() => navigate("/account")}>Account</MenuItem> */}
           <MenuItem onClick={() => navigate("/translate")}>
             New translation
           </MenuItem>

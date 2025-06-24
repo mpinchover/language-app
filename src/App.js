@@ -16,6 +16,7 @@ import VideoDashboard from "./components/video-editor/video-dashboard";
 import VideoChat from "./components/video-chat";
 import Translate from "./components/translation/translate";
 import PastTranslations from "./components/translation/past-translations";
+import GenerateTranslation from "./components/translation/generate-translation";
 
 function App() {
   const location = useLocation();
@@ -32,7 +33,7 @@ function App() {
           {shouldShowNavbar && <Navbar />}{" "}
           {/* Conditionally render the Navbar */}
           <Routes>
-            <Route
+            {/* <Route
               path="/"
               element={
                 // <ProtectedRoute>
@@ -55,31 +56,31 @@ function App() {
                   <CreatePost />
                 </ProtectedRoute>
               }
-            />
-            <Route
+            /> */}
+            {/* <Route
               path="/my-posts"
               element={
                 <ProtectedRoute>
                   <MyPosts />
                 </ProtectedRoute>
               }
-            />
-            <Route
+            /> */}
+            {/* <Route
               path="/post/:id"
               element={
                 <ProtectedRoute>
                   <Post />
                 </ProtectedRoute>
               }
-            />
-            <Route
+            /> */}
+            {/* <Route
               path="/account"
               element={
                 <ProtectedRoute>
                   <Account />
                 </ProtectedRoute>
               }
-            />
+            /> */}
             <Route
               path="/login"
               element={
@@ -88,17 +89,18 @@ function App() {
                 </PublicRoute>
               }
             />
-            <Route
+            {/* <Route
               path="/video-editor"
               element={
                 // <PublicRoute>
                 <VideoDashboard />
                 // </PublicRoute>
               }
-            />
+            /> */}
 
+            <Route path="/translate" element={<GenerateTranslation />} />
             <Route
-              path="/translate"
+              path="/translation/:translation_uuid"
               element={
                 <ProtectedRoute>
                   <Translate />
