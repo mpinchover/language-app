@@ -11,7 +11,8 @@ import {
 } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
 import { getAuth } from "firebase/auth";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { Spinner, Center } from "@chakra-ui/react";
 
 const Translate = () => {
   const [showIntake, setShowIntake] = useState(true);
@@ -27,7 +28,7 @@ const Translate = () => {
   const [machineGeneratedData, setMachineGeneratedData] = useState({});
   const auth = getAuth();
   const { translation_uuid } = useParams();
-
+  const navigate = useNavigate(); // ✅ Add this line
   const getData = async () => {
     const user = auth.currentUser;
     const idToken = await user.getIdToken();
@@ -35,7 +36,7 @@ const Translate = () => {
     try {
       setLoading(true);
       const response = await fetch(
-        `http://127.0.0.1:5005/api/get-translation/${translation_uuid}`,
+        `https://translation-app-377296926112.southamerica-east1.run.app/api/get-translation/${translation_uuid}`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -145,10 +146,18 @@ const Translate = () => {
     </Box>
   );
 
+  if (loading) {
+    return (
+      <Center h="80vh">
+        <Spinner size="xl" color="blue.500" thickness="4px" speed="0.65s" />
+      </Center>
+    );
+  }
+
   return (
     <Box px={12}>
       <Box mt={4} display="flex" justifyContent="flex-end">
-        <Button colorScheme="blue" onClick={() => setShowIntake(true)}>
+        <Button colorScheme="blue" onClick={() => navigate("/translate/")}>
           Generate New Article
         </Button>
       </Box>
@@ -162,9 +171,9 @@ const Translate = () => {
               mb={4}
             >
               <option value="original">Original</option>
-              <option value="level_1">Level 1</option>
-              <option value="level_2">Level 2</option>
-              <option value="level_3">Level 3</option>
+              <option value="level_1">Basic</option>
+              <option value="level_2">Intermediate</option>
+              <option value="level_3">Advanced</option>
             </Select>
           </Box>
           <Box flex={1}>
@@ -174,9 +183,9 @@ const Translate = () => {
               mb={4}
             >
               <option value="original">Original</option>
-              <option value="level_1">Level 1</option>
-              <option value="level_2">Level 2</option>
-              <option value="level_3">Level 3</option>
+              <option value="level_1">Basic</option>
+              <option value="level_2">Intermediate</option>
+              <option value="level_3">Advanced</option>
             </Select>
           </Box>
         </HStack>

@@ -8,52 +8,58 @@ import {
   Button,
   Input,
   Select,
+  Spinner,
 } from "@chakra-ui/react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { getAuth } from "firebase/auth";
-import { useNavigate } from "react-router-dom"; // ✅ Add this line
+import { useNavigate } from "react-router-dom";
+import { useToast } from "@chakra-ui/react";
 
 const GenerateTranslation = () => {
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate(); // ✅ Add this line
-
+  const navigate = useNavigate();
   const [articleContent, setArticleContent] = useState();
-  const [machineGeneratedData, setMachineGeneratedData] = useState({});
   const auth = getAuth();
+  const toast = useToast();
 
   const getData = async () => {
+    if (!articleContent || articleContent.trim().split(/\s+/).length < 5) {
+      toast({
+        title: "We need a little more text.",
+        description: "Please enter at least 5 words.",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
+
     const user = auth.currentUser;
     const idToken = await user.getIdToken();
 
     try {
       setLoading(true);
-      //   const response = await fetch(
-      //     "http://127.0.0.1:5005/api/translate-article",
-      //     {
-      //       method: "POST",
-      //       headers: {
-      //         "Content-Type": "application/json",
-      //         Authorization: `Bearer ${idToken}`,
-      //       },
-      //       body: JSON.stringify({
-      //         article_content: articleContent,
-      //       }),
-      //     }
-      //   );
+      const response = await fetch(
+        "https://translation-app-377296926112.southamerica-east1.run.app/api/translate-article",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${idToken}`,
+          },
+          body: JSON.stringify({
+            article_content: articleContent,
+          }),
+        }
+      );
 
-      //   if (!response.ok) {
-      //     throw new Error(`HTTP error! status: ${response.status}`);
-      //   }
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
 
-      //   const data = await response.json();
-
-      const data = {
-        uuid: "something",
-      };
-
+      const data = await response.json();
       const translationUuid = data.uuid;
-      navigate(`/translation/${translationUuid}`); // ✅ Redirect here
-      //   setMachineGeneratedData(data);
+      navigate(`/translation/${translationUuid}`);
     } catch (error) {
       console.error("Error:", error);
     } finally {
@@ -90,10 +96,18 @@ const GenerateTranslation = () => {
         <Button
           colorScheme="blue"
           alignSelf="flex-end"
-          isLoading={loading}
+          isLoading={false}
           onClick={getData}
+          disabled={loading}
         >
-          Generate Translation
+          {loading ? (
+            <HStack spacing={3}>
+              <Spinner size="sm" />
+              <Text fontSize="sm">Hang on, this can take 1–2 minutes.</Text>
+            </HStack>
+          ) : (
+            "Generate Translation"
+          )}
         </Button>
       </VStack>
     </Box>
