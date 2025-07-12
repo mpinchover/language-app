@@ -30,17 +30,18 @@ const Translate = () => {
   const { translation_uuid } = useParams();
   const navigate = useNavigate(); // ✅ Add this line
   const getData = async () => {
-    const user = auth.currentUser;
-    const idToken = await user.getIdToken();
+    // const user = auth.currentUser;
+    // console.log("User is ", user);
+    // const idToken = await user.getIdToken();
 
     try {
       setLoading(true);
       const response = await fetch(
-        `https://translation-app-377296926112.southamerica-east1.run.app/api/get-translation/${translation_uuid}`,
+        `http://127.0.0.1:8080/api/get-article/${translation_uuid}`,
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${idToken}`,
+            // Authorization: `Bearer ${idToken}`,
           },
         }
       );
@@ -50,9 +51,10 @@ const Translate = () => {
       }
 
       const data = await response.json();
-      // console.log("Got back data ", data);
-      setMachineGeneratedData(data);
-      generateAllSentences(data.translation);
+      const article = data.article;
+      console.log("Got back data ", data.article);
+      setMachineGeneratedData(article);
+      generateAllSentences(article.versions);
     } catch (error) {
       console.error("Error:", error);
     } finally {
@@ -76,8 +78,8 @@ const Translate = () => {
   };
 
   const generateAllSentences = (data) => {
-    const originalSentences = generateSentences(data, "original");
-    const simplified1Sentences = generateSentences(data, "level_1");
+    const originalSentences = generateSentences(data, "gen_original");
+    const simplified1Sentences = generateSentences(data, "gen_level_1");
 
     setBoxLeft(originalSentences);
     setBoxRight(simplified1Sentences);
@@ -86,7 +88,7 @@ const Translate = () => {
   const onChangeSelection = (box, e) => {
     const value = e.target.value;
     const newSentences = generateSentences(
-      machineGeneratedData.translation,
+      machineGeneratedData.versions,
       value
     );
 
@@ -170,10 +172,10 @@ const Translate = () => {
               onChange={(e) => onChangeSelection("box_left", e)}
               mb={4}
             >
-              <option value="original">Original</option>
-              <option value="level_1">Basic</option>
-              <option value="level_2">Intermediate</option>
-              <option value="level_3">Advanced</option>
+              <option value="gen_original">Original</option>
+              <option value="gen_level_1">Basic</option>
+              <option value="gen_level_2">Intermediate</option>
+              <option value="gen_level_3">Advanced</option>
             </Select>
           </Box>
           <Box flex={1}>
@@ -182,10 +184,10 @@ const Translate = () => {
               onChange={(e) => onChangeSelection("box_right", e)}
               mb={4}
             >
-              <option value="original">Original</option>
-              <option value="level_1">Basic</option>
-              <option value="level_2">Intermediate</option>
-              <option value="level_3">Advanced</option>
+              <option value="gen_original">Original</option>
+              <option value="gen_level_1">Basic</option>
+              <option value="gen_level_2">Intermediate</option>
+              <option value="gen_level_3">Advanced</option>
             </Select>
           </Box>
         </HStack>

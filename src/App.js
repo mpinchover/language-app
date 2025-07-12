@@ -25,6 +25,7 @@ import PastTranslations from "./components/translation/past-translations";
 import GenerateTranslation from "./components/translation/generate-translation";
 import { getAuth } from "firebase/auth";
 import Home from "./components/home/home";
+import Articles from "./components/articles";
 
 const RootRedirect = () => {
   const user = getAuth().currentUser;
@@ -78,6 +79,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <Translate />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/articles"
+              element={
+                <ProtectedRoute>
+                  <Articles />
                 </ProtectedRoute>
               }
             />
