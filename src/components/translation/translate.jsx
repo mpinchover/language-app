@@ -201,7 +201,7 @@ const Translate = () => {
   }
 
   return (
-    <Box px={12}>
+    <Box px={12} mt={24}>
       <Box mt={4} display="flex" justifyContent="flex-end"></Box>
 
       <Box mt={6}>

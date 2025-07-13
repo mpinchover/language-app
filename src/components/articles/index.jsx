@@ -77,7 +77,7 @@ const Articles = () => {
   }
 
   return (
-    <Box p={[4, 8, 12]} bg="white" minH="100vh">
+    <Box mt={24} p={[4, 8, 12]} bg="white" minH="100vh">
       <Heading size="lg" mb={6} color="gray.700">
         Click an article to read
       </Heading>

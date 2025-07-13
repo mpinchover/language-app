@@ -2,91 +2,72 @@ import {
   Box,
   Heading,
   Text,
-  Image,
   VStack,
-  StackDivider,
-  Flex,
+  SimpleGrid,
+  useBreakpointValue,
 } from "@chakra-ui/react";
-import image_1 from "./image_1.png";
-import image_2 from "./image_2.png";
-import image_3 from "./image_3.png";
 
 const Home = () => {
+  const columnCount = useBreakpointValue({ base: 1, md: 3 });
+
+  const features = [
+    {
+      title: "Choose an article to read",
+      description:
+        "Each article is broken into basic, intermediate and advanced versions.",
+      color: "blue.300",
+    },
+    {
+      title: "Map each sentence",
+      description:
+        "Each sentence is shown in basic, intermediate and advanced form.",
+      color: "pink.300",
+    },
+    {
+      title: "Hover to get the nikud and English translation",
+      description:
+        "Hover over any word to see its nikud and English meaning in context.",
+      color: "cyan.300",
+    },
+  ];
+
   return (
-    <Box p={12} maxW="6xl" mx="auto">
-      <VStack
-        spacing={20}
-        align="stretch"
-        divider={<StackDivider borderColor="gray.200" />}
+    <Box
+      bg="black"
+      color="white"
+      minH="100vh"
+      py={16}
+      px={[4, 8, 12]}
+      textAlign="center"
+    >
+      <Heading
+        fontSize={"5xl"}
+        fontWeight="extrabold"
+        bgGradient="linear(to-r, blue.400, cyan.400)"
+        bgClip="text"
+        mb={16}
       >
-        {/* Section 1 */}
-        <Flex direction={{ base: "column", md: "row" }} align="center" gap={8}>
-          <Box w={{ base: "100%", md: "50%" }}>
-            <Heading size="lg" mb={4}>
-              Choose an article to read
-            </Heading>
-            <Text fontSize="md" color="gray.600">
-              Each article is broken into nto basic, intermediate and advanced
-              versions.
-            </Text>
-          </Box>
-          <Box w={{ base: "100%", md: "50%" }}>
-            <Image
-              src={image_1}
-              alt="Paste article"
-              w="100%"
-              h="auto"
-              objectFit="contain"
-              borderRadius="xl"
-            />
-          </Box>
-        </Flex>
+        LANGUAGE APP
+      </Heading>
 
-        {/* Section 2 */}
-        <Flex direction={{ base: "column", md: "row" }} align="center" gap={8}>
-          <Box w={{ base: "100%", md: "50%" }}>
-            <Heading size="lg" mb={4}>
-              Map each sentence
+      <SimpleGrid columns={columnCount} spacing={10} maxW="6xl" mx="auto">
+        {features.map((f, i) => (
+          <Box
+            key={i}
+            p={8}
+            borderWidth={2}
+            borderColor={f.color}
+            borderRadius="2xl"
+            bg="gray.900"
+            boxShadow="xl"
+          >
+            <Heading fontSize="2xl" mb={4} color={f.color}>
+              {f.title}
             </Heading>
-            <Text fontSize="md" color="gray.600">
-              Each sentence is shown in basic, intermediate and advanced form.
-            </Text>
+            <Text color="gray.300">{f.description}</Text>
           </Box>
-          <Box w={{ base: "100%", md: "50%" }}>
-            <Image
-              src={image_2}
-              alt="Sentence mapping"
-              w="100%"
-              h="auto"
-              objectFit="contain"
-              borderRadius="xl"
-            />
-          </Box>
-        </Flex>
-
-        {/* Section 3 */}
-        <Flex direction={{ base: "column", md: "row" }} align="center" gap={8}>
-          <Box w={{ base: "100%", md: "50%" }}>
-            <Heading size="lg" mb={4}>
-              Hover to get the nikud and English translation
-            </Heading>
-            <Text fontSize="md" color="gray.600">
-              Hover over any word to see its nikud and English meaning in
-              context.
-            </Text>
-          </Box>
-          <Box w={{ base: "100%", md: "50%" }}>
-            <Image
-              src={image_3}
-              alt="Nikud hover"
-              w="100%"
-              h="auto"
-              objectFit="contain"
-              borderRadius="xl"
-            />
-          </Box>
-        </Flex>
-      </VStack>
+        ))}
+      </SimpleGrid>
     </Box>
   );
 };

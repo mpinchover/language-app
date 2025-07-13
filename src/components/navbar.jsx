@@ -28,13 +28,25 @@ const Navbar = ({ onSearch }) => {
 
   return (
     <Box
+      // as="nav"
+      // padding="1rem"
+      // borderBottom="1px solid"
+      // borderColor="gray.100"
+      // display="flex"
+      // justifyContent={"flex-end"}
+      // p={12}
       as="nav"
-      padding="1rem"
-      borderBottom="1px solid"
-      borderColor="gray.100"
+      py={12}
+      px={12}
       display="flex"
-      justifyContent={"flex-end"}
-      p={12}
+      justifyContent="flex-end"
+      bg="transparent"
+      position="absolute"
+      top={0}
+      right={0}
+      zIndex={10}
+      // border="solid 1px green"
+      width="100%"
     >
       {isLoggedIn ? (
         <Menu>
@@ -49,13 +61,13 @@ const Navbar = ({ onSearch }) => {
       ) : (
         <HStack spacing={4}>
           <Button
-            colorScheme="blue"
             variant="outline"
+            colorScheme="pink"
             onClick={() => navigate("/login")}
           >
             Login
           </Button>
-          <Button colorScheme="blue" onClick={() => navigate("/login")}>
+          <Button colorScheme="pink" onClick={() => navigate("/login")}>
             Sign Up
           </Button>
         </HStack>
