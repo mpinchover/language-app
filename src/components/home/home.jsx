@@ -23,7 +23,7 @@ const Home = () => {
         <Flex direction={{ base: "column", md: "row" }} align="center" gap={8}>
           <Box w={{ base: "100%", md: "50%" }}>
             <Heading size="lg" mb={4}>
-              Paste in a news article!!!
+              Choose an article to read.
             </Heading>
             <Text fontSize="md" color="gray.600">
               We break it down into basic, intermediate and advanced versions.

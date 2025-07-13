@@ -1,6 +1,8 @@
 import { Box, Stack, Spinner, Divider } from "@chakra-ui/react";
 import { useState, useEffect, useRef } from "react";
+import { getAuth } from "firebase/auth";
 import FeedPost from "./feed-post";
+
 const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 const PAGE_SIZE = 5;
 
@@ -10,13 +12,20 @@ const Feed = () => {
   const [hasMore, setHasMore] = useState(true);
   const [curPage, setCurPage] = useState(1);
   const observerRef = useRef(null);
+  const auth = getAuth();
 
   const fetchData = async (page) => {
     setLoading(true);
+    const user = auth.currentUser;
+    const idToken = await user.getIdToken();
+
     try {
       const res = await fetch(`${BASE_URL}/api/posts?page=${page}`, {
         method: "GET",
-        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${idToken}`,
+        },
       });
       const data = await res.json();
 

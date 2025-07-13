@@ -1,15 +1,25 @@
 import { Box, Text, VStack, Heading } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { getAuth } from "firebase/auth";
+
 const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 const Articles = () => {
   const [articles, setArticles] = useState([]);
   const navigate = useNavigate();
+  const auth = getAuth();
 
   const getArticles = async () => {
+    const user = auth.currentUser;
+    const idToken = await user.getIdToken();
     try {
-      const response = await fetch(`${BASE_URL}/api/get-articles`);
+      const response = await fetch(`${BASE_URL}/api/get-articles`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${idToken}`,
+        },
+      });
       const data = await response.json();
 
       if (data.success && data.articles) {

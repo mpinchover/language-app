@@ -37,6 +37,9 @@ const Translate = () => {
   const navigate = useNavigate();
 
   const getData = async () => {
+    const user = auth.currentUser;
+    const idToken = await user.getIdToken();
+
     try {
       setLoading(true);
       const response = await fetch(
@@ -44,6 +47,7 @@ const Translate = () => {
         {
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${idToken}`,
           },
         }
       );
