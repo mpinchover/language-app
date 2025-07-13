@@ -29,6 +29,7 @@ const Translate = () => {
   const [machineGeneratedData, setMachineGeneratedData] = useState({});
   const [tappedTokenIndex, setTappedTokenIndex] = useState(null); // ✅ Track tapped token on mobile
   const [tappedTokenMap, setTappedTokenMap] = useState({});
+  const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
   const isMobile = useBreakpointValue({ base: true, md: false }); // ✅ Track if device is mobile
   const auth = getAuth();
@@ -39,7 +40,7 @@ const Translate = () => {
     try {
       setLoading(true);
       const response = await fetch(
-        `http://127.0.0.1:8080/api/get-article/${translation_uuid}`,
+        `${BASE_URL}/api/get-article/${translation_uuid}`,
         {
           headers: {
             "Content-Type": "application/json",

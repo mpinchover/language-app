@@ -12,6 +12,7 @@ import { useState, useEffect } from "react";
 import { CloseIcon } from "@chakra-ui/icons";
 import { getAuth } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
+const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 const PastTranslations = () => {
   const [translations, setTranslations] = useState([]);
@@ -25,15 +26,12 @@ const PastTranslations = () => {
     setIsLoading(true);
     const idToken = await user.getIdToken();
 
-    fetch(
-      "https://translation-app-377296926112.southamerica-east1.run.app/api/get-translations",
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${idToken}`,
-        },
-      }
-    )
+    fetch(`${BASE_URL}p/api/get-translations`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${idToken}`,
+      },
+    })
       .then((res) => res.json())
       .then((data) => {
         setTranslations(data["translations"]);
@@ -56,16 +54,13 @@ const PastTranslations = () => {
 
     try {
       const idToken = await user.getIdToken();
-      await fetch(
-        `https://translation-app-377296926112.southamerica-east1.run.app/api/delete-translation/${item.uuid}`,
-        {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${idToken}`,
-          },
-        }
-      );
+      await fetch(`${BASE_URL}/api/delete-translation/${item.uuid}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${idToken}`,
+        },
+      });
       setTranslations((prev) => prev.filter((t) => t.uuid !== item.uuid));
     } catch (err) {
       console.error("Failed to delete translation:", err);

@@ -1,6 +1,7 @@
 import { Box, Text, VStack, Heading } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 const Articles = () => {
   const [articles, setArticles] = useState([]);
@@ -8,7 +9,7 @@ const Articles = () => {
 
   const getArticles = async () => {
     try {
-      const response = await fetch("http://127.0.0.1:8080/api/get-articles");
+      const response = await fetch(`${BASE_URL}/api/get-articles`);
       const data = await response.json();
 
       if (data.success && data.articles) {
@@ -28,7 +29,7 @@ const Articles = () => {
   useEffect(() => {
     getArticles();
   }, []);
-  
+
   const renderArticles = (articles) => {
     return articles?.map((e, i) => (
       <Box

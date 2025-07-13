@@ -1,7 +1,7 @@
 import { Box, Stack, Spinner, Divider } from "@chakra-ui/react";
 import { useState, useEffect, useRef } from "react";
 import FeedPost from "./feed-post";
-
+const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 const PAGE_SIZE = 5;
 
 const Feed = () => {
@@ -14,7 +14,7 @@ const Feed = () => {
   const fetchData = async (page) => {
     setLoading(true);
     try {
-      const res = await fetch(`http://127.0.0.1:5000/api/posts?page=${page}`, {
+      const res = await fetch(`${BASE_URL}/api/posts?page=${page}`, {
         method: "GET",
         credentials: "include",
       });

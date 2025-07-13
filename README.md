@@ -1,9 +1,10 @@
 next steps
- - add a magnifying glass button to zoom in to the markers
- - allow multiple cuts
- - final page should be a page that shows all the gifs with links.
-  - have a button to copy the link
-  - link shouold be small
+
+- add a magnifying glass button to zoom in to the markers
+- allow multiple cuts
+- final page should be a page that shows all the gifs with links.
+- have a button to copy the link
+- link shouold be small
 
 # Getting Started with Create React App
 
@@ -75,3 +76,5 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+BASE_URL https://translation-app-377296926112.southamerica-east1.run.app

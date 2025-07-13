@@ -14,6 +14,7 @@ import { useState } from "react";
 import { getAuth } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@chakra-ui/react";
+const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 const GenerateTranslation = () => {
   const [loading, setLoading] = useState(false);
@@ -39,19 +40,16 @@ const GenerateTranslation = () => {
 
     try {
       setLoading(true);
-      const response = await fetch(
-        "https://translation-app-377296926112.southamerica-east1.run.app/api/translate-article",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${idToken}`,
-          },
-          body: JSON.stringify({
-            article_content: articleContent,
-          }),
-        }
-      );
+      const response = await fetch(`${BASE_URL}/api/translate-article`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${idToken}`,
+        },
+        body: JSON.stringify({
+          article_content: articleContent,
+        }),
+      });
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
