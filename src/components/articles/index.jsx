@@ -1,4 +1,4 @@
-import { Box, Text, VStack, Heading } from "@chakra-ui/react";
+import { Box, Text, VStack, Heading, Center, Spinner } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getAuth } from "firebase/auth";
@@ -7,6 +7,7 @@ const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 const Articles = () => {
   const [articles, setArticles] = useState([]);
+  const [loading, isLoading] = useState(false);
   const navigate = useNavigate();
   const auth = getAuth();
 
@@ -62,6 +63,15 @@ const Articles = () => {
       </Box>
     ));
   };
+
+  if (isLoading) {
+    return (
+      <Center h="80vh">
+        <Spinner size="xl" color="blue.500" thickness="4px" speed="0.65s" />
+      </Center>
+    );
+  }
+
   return (
     <Box p={[4, 8, 12]} bg="white" minH="100vh">
       <Heading size="lg" mb={6} color="gray.700">
