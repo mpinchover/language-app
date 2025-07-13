@@ -20,8 +20,8 @@ const Translate = () => {
   const [inputText, setInputText] = useState("");
   const [inputLink, setInputLink] = useState("");
   const [loading, setLoading] = useState(false);
-  const [selection1, setSelection1] = useState("original");
-  const [selection2, setSelection2] = useState("level_1");
+  const [selection1, setSelection1] = useState("gen_original");
+  const [selection2, setSelection2] = useState("gen_level_1");
   const [allTranslations, setAllTranslations] = useState({});
   const [boxLeft, setBoxLeft] = useState([]);
   const [boxRight, setBoxRight] = useState([]);
