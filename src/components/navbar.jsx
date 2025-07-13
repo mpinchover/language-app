@@ -42,12 +42,7 @@ const Navbar = ({ onSearch }) => {
             <HamburgerIcon w={5} h={5} />
           </MenuButton>
           <MenuList>
-            <MenuItem onClick={() => navigate("/translate")}>
-              New translation
-            </MenuItem>
-            <MenuItem onClick={() => navigate("/past-translations")}>
-              Past Translations
-            </MenuItem>
+            <MenuItem onClick={() => navigate("/articles")}>Articles</MenuItem>
             <MenuItem onClick={logOut}>Logout</MenuItem>
           </MenuList>
         </Menu>

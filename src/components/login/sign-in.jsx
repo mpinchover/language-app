@@ -24,7 +24,7 @@ const SignIn = ({ setLoginState }) => {
   const handleLogIn = async () => {
     try {
       await logIn(email, password);
-      navigate("/translate");
+      navigate("/articles");
     } catch (err) {
       toast({
         title: "Error logging in",

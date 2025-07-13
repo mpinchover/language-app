@@ -21,7 +21,7 @@ const auth = getAuth(app);
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const toast = useToast();
 
   const navigate = useNavigate();
@@ -29,13 +29,12 @@ export const AuthProvider = ({ children }) => {
   // Listen for user state changes
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setLoading(true);
       setUser(currentUser);
       setLoading(false);
     });
 
     return () => unsubscribe();
-  }, [user]);
+  }, []);
 
   const signUp = async (email, password) => {
     await createUserWithEmailAndPassword(auth, email, password);

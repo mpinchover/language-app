@@ -1,5 +1,5 @@
 import "./App.css";
-import { Box, Button, ChakraProvider } from "@chakra-ui/react";
+import { Box, Button, Center, ChakraProvider, Spinner } from "@chakra-ui/react";
 // import { system } from "@chakra-ui/react/preset";
 import Navbar from "./components/navbar";
 import Feed from "./components/feed/feed";
@@ -26,14 +26,20 @@ import GenerateTranslation from "./components/translation/generate-translation";
 import { getAuth } from "firebase/auth";
 import Home from "./components/home/home";
 import Articles from "./components/articles";
+import { useAuth } from "./auth/auth-context";
 
 const RootRedirect = () => {
-  const user = getAuth().currentUser;
-  console.log("User is ", user);
-  if (user) {
-    return <Navigate to="/translate" replace />;
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <Center h="80vh">
+        <Spinner size="xl" color="blue.500" thickness="4px" speed="0.65s" />
+      </Center>
+    );
   }
-  return <Home />;
+
+  return user ? <Navigate to="/articles" replace /> : <Home />;
 };
 
 function App() {
@@ -57,14 +63,7 @@ function App() {
               }
             />
 
-            <Route
-              path="/"
-              element={
-                <PublicRoute>
-                  <Home />
-                </PublicRoute>
-              }
-            />
+            <Route path="/" element={<RootRedirect />} />
 
             <Route
               path="/translate"

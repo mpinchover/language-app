@@ -159,9 +159,9 @@ const Translate = () => {
   return (
     <Box px={12}>
       <Box mt={4} display="flex" justifyContent="flex-end">
-        <Button colorScheme="blue" onClick={() => navigate("/translate/")}>
+        {/* <Button colorScheme="blue" onClick={() => navigate("/translate/")}>
           Generate New Article
-        </Button>
+        </Button> */}
       </Box>
 
       <Box mt={6}>
