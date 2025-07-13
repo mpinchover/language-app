@@ -13,6 +13,7 @@ import { useState, useEffect } from "react";
 import { getAuth } from "firebase/auth";
 import { useNavigate, useParams } from "react-router-dom";
 import { Spinner, Center } from "@chakra-ui/react";
+import { useBreakpointValue } from "@chakra-ui/react";
 
 const Translate = () => {
   const [showIntake, setShowIntake] = useState(true);
@@ -26,14 +27,14 @@ const Translate = () => {
   const [boxRight, setBoxRight] = useState([]);
   const [articleContent, setArticleContent] = useState();
   const [machineGeneratedData, setMachineGeneratedData] = useState({});
+  const [tappedTokenIndex, setTappedTokenIndex] = useState(null); // ✅ Track tapped token on mobile
+
+  const isMobile = useBreakpointValue({ base: true, md: false }); // ✅ Track if device is mobile
   const auth = getAuth();
   const { translation_uuid } = useParams();
-  const navigate = useNavigate(); // ✅ Add this line
-  const getData = async () => {
-    // const user = auth.currentUser;
-    // console.log("User is ", user);
-    // const idToken = await user.getIdToken();
+  const navigate = useNavigate();
 
+  const getData = async () => {
     try {
       setLoading(true);
       const response = await fetch(
@@ -41,7 +42,6 @@ const Translate = () => {
         {
           headers: {
             "Content-Type": "application/json",
-            // Authorization: `Bearer ${idToken}`,
           },
         }
       );
@@ -52,7 +52,6 @@ const Translate = () => {
 
       const data = await response.json();
       const article = data.article;
-      console.log("Got back data ", data.article);
       setMachineGeneratedData(article);
       generateAllSentences(article.versions);
     } catch (error) {
@@ -92,8 +91,6 @@ const Translate = () => {
       value
     );
 
-    console.log("Sentences");
-
     if (box === "box_left") {
       setSelection1(value);
       setBoxLeft(newSentences);
@@ -109,42 +106,83 @@ const Translate = () => {
     }
   }, [translation_uuid]);
 
-  // console.log("Tselection ", selection1);
+  // ✅ Token renderer with mobile + desktop behavior
   const renderTokenBlock = (tokens) => (
-    <Box display="flex" flexWrap="wrap" gap={2} lineHeight="2.5rem">
-      {tokens.map(({ he, nikud, en }, j) => (
-        <Tooltip
-          key={j}
-          label={
-            <Box p={2}>
-              <Text fontSize="md" color="blue.500">
-                {nikud}
-              </Text>
-              <Text fontSize="sm" color="gray.600">
-                {en}
-              </Text>
+    <Box
+      display="flex"
+      flexWrap="wrap"
+      gap={2}
+      lineHeight="2.5rem"
+      onClick={() => setTappedTokenIndex(null)} // ✅ Tapping outside a word hides tooltips
+    >
+      {tokens.map(({ he, nikud, en }, j) => {
+        if (isMobile) {
+          const isTapped = tappedTokenIndex === j;
+          return (
+            <Box
+              key={j}
+              as="span"
+              fontSize="xl"
+              px={2}
+              py={1}
+              borderRadius="md"
+              cursor="pointer"
+              bg={isTapped ? "gray.100" : "transparent"}
+              onClick={(e) => {
+                e.stopPropagation(); // ✅ Prevents parent from closing on tap
+                setTappedTokenIndex(j);
+              }}
+            >
+              <Text>{he}</Text>
+              {isTapped && (
+                <Box mt={1}>
+                  <Text fontSize="md" color="blue.500">
+                    {nikud}
+                  </Text>
+                  <Text fontSize="sm" color="gray.600">
+                    {en}
+                  </Text>
+                </Box>
+              )}
             </Box>
-          }
-          placement="top"
-          hasArrow
-          bg="gray.100"
-          color="black"
-          borderRadius="md"
-          boxShadow="md"
-        >
-          <Box
-            as="span"
-            fontSize="xl"
-            px={2}
-            py={1}
-            _hover={{ bg: "gray.100" }}
-            borderRadius="md"
-            cursor="pointer"
-          >
-            {he}
-          </Box>
-        </Tooltip>
-      ))}
+          );
+        } else {
+          // ✅ Desktop hover version
+          return (
+            <Tooltip
+              key={j}
+              label={
+                <Box p={2}>
+                  <Text fontSize="md" color="blue.500">
+                    {nikud}
+                  </Text>
+                  <Text fontSize="sm" color="gray.600">
+                    {en}
+                  </Text>
+                </Box>
+              }
+              placement="top"
+              hasArrow
+              bg="gray.100"
+              color="black"
+              borderRadius="md"
+              boxShadow="md"
+            >
+              <Box
+                as="span"
+                fontSize="xl"
+                px={2}
+                py={1}
+                _hover={{ bg: "gray.100" }}
+                borderRadius="md"
+                cursor="pointer"
+              >
+                {he}
+              </Box>
+            </Tooltip>
+          );
+        }
+      })}
     </Box>
   );
 
@@ -158,11 +196,7 @@ const Translate = () => {
 
   return (
     <Box px={12}>
-      <Box mt={4} display="flex" justifyContent="flex-end">
-        {/* <Button colorScheme="blue" onClick={() => navigate("/translate/")}>
-          Generate New Article
-        </Button> */}
-      </Box>
+      <Box mt={4} display="flex" justifyContent="flex-end"></Box>
 
       <Box mt={6}>
         <HStack spacing={6}>
@@ -178,18 +212,20 @@ const Translate = () => {
               <option value="gen_level_3">Advanced</option>
             </Select>
           </Box>
-          <Box flex={1}>
-            <Select
-              value={selection2}
-              onChange={(e) => onChangeSelection("box_right", e)}
-              mb={4}
-            >
-              <option value="gen_original">Original</option>
-              <option value="gen_level_1">Basic</option>
-              <option value="gen_level_2">Intermediate</option>
-              <option value="gen_level_3">Advanced</option>
-            </Select>
-          </Box>
+          {!isMobile && (
+            <Box flex={1}>
+              <Select
+                value={selection2}
+                onChange={(e) => onChangeSelection("box_right", e)}
+                mb={4}
+              >
+                <option value="gen_original">Original</option>
+                <option value="gen_level_1">Basic</option>
+                <option value="gen_level_2">Intermediate</option>
+                <option value="gen_level_3">Advanced</option>
+              </Select>
+            </Box>
+          )}
         </HStack>
 
         <VStack spacing={6} align="stretch" mt={2}>
@@ -199,29 +235,21 @@ const Translate = () => {
             const bgColor = `hsl(${hue}, 100%, 95%)`;
 
             return (
-              <HStack key={idx} spacing={6} align="stretch">
-                <Box
-                  flex={1}
-                  p={4}
-                  // borderWidth={1}
-                  borderRadius="xl"
-                  bg={bgColor}
-                  // boxShadow="sm"
-                  dir="rtl"
-                >
+              <HStack
+                key={idx}
+                spacing={6}
+                align="stretch"
+                flexDir={{ base: "column", md: "row" }}
+              >
+                <Box flex={1} p={4} borderRadius="xl" bg={bgColor} dir="rtl">
                   {renderTokenBlock(leftSentence)}
                 </Box>
-                <Box
-                  flex={1}
-                  p={4}
-                  // borderWidth={1}
-                  borderRadius="xl"
-                  bg={bgColor}
-                  // boxShadow="sm"
-                  dir="rtl"
-                >
-                  {renderTokenBlock(rightSentence)}
-                </Box>
+
+                {!isMobile && (
+                  <Box flex={1} p={4} borderRadius="xl" bg={bgColor} dir="rtl">
+                    {renderTokenBlock(rightSentence)}
+                  </Box>
+                )}
               </HStack>
             );
           })}
