@@ -7,14 +7,16 @@ const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 const Articles = () => {
   const [articles, setArticles] = useState([]);
-  const [loading, isLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const auth = getAuth();
 
   const getArticles = async () => {
     const user = auth.currentUser;
     const idToken = await user.getIdToken();
+
     try {
+      setLoading(true);
       const response = await fetch(`${BASE_URL}/api/get-articles`, {
         headers: {
           "Content-Type": "application/json",
@@ -30,6 +32,8 @@ const Articles = () => {
       }
     } catch (error) {
       console.error("Error fetching articles:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
