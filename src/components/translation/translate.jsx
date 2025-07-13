@@ -102,6 +102,20 @@ const Translate = () => {
   };
 
   useEffect(() => {
+    if (!isMobile) return;
+
+    const handleClickOutside = () => {
+      setTappedTokenMap({});
+    };
+
+    document.addEventListener("click", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, [isMobile]);
+
+  useEffect(() => {
     if (translation_uuid) {
       getData();
     }
