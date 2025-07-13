@@ -47,7 +47,13 @@ const Home = () => {
         px={[4, 8, 12]}
         textAlign="center"
       >
-        <SimpleGrid columns={columnCount} spacing={10} maxW="6xl" mx="auto">
+        <SimpleGrid
+          mt={{ base: 24, md: 0 }}
+          columns={columnCount}
+          spacing={10}
+          maxW="6xl"
+          mx="auto"
+        >
           {features.map((f, i) => (
             <Box
               key={i}
