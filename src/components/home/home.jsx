@@ -39,35 +39,28 @@ const Home = () => {
       py={16}
       px={[4, 8, 12]}
       textAlign="center"
+      bgGradient="linear(to-b, black, purple.900)"
     >
-      <Heading
-        fontSize={"5xl"}
-        fontWeight="extrabold"
-        bgGradient="linear(to-r, blue.400, cyan.400)"
-        bgClip="text"
-        mb={16}
-      >
-        LANGUAGE APP
-      </Heading>
-
-      <SimpleGrid columns={columnCount} spacing={10} maxW="6xl" mx="auto">
-        {features.map((f, i) => (
-          <Box
-            key={i}
-            p={8}
-            borderWidth={2}
-            borderColor={f.color}
-            borderRadius="2xl"
-            bg="gray.900"
-            boxShadow="xl"
-          >
-            <Heading fontSize="2xl" mb={4} color={f.color}>
-              {f.title}
-            </Heading>
-            <Text color="gray.300">{f.description}</Text>
-          </Box>
-        ))}
-      </SimpleGrid>
+      <Box mt={24}>
+        <SimpleGrid columns={columnCount} spacing={10} maxW="6xl" mx="auto">
+          {features.map((f, i) => (
+            <Box
+              key={i}
+              p={8}
+              borderWidth={2}
+              borderColor={f.color}
+              borderRadius="2xl"
+              bg="gray.900"
+              boxShadow="xl"
+            >
+              <Heading fontSize="2xl" mb={4} color={f.color}>
+                {f.title}
+              </Heading>
+              <Text color="gray.300">{f.description}</Text>
+            </Box>
+          ))}
+        </SimpleGrid>
+      </Box>
     </Box>
   );
 };
