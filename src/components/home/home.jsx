@@ -5,6 +5,7 @@ import {
   VStack,
   SimpleGrid,
   useBreakpointValue,
+  Flex,
 } from "@chakra-ui/react";
 
 const Home = () => {
@@ -36,12 +37,16 @@ const Home = () => {
       bg="black"
       color="white"
       minH="100vh"
-      py={16}
-      px={[4, 8, 12]}
-      textAlign="center"
       bgGradient="linear(to-b, black, purple.900)"
     >
-      <Box mt={24}>
+      <Flex
+        direction="column"
+        align="center"
+        justify="center"
+        minH="100vh"
+        px={[4, 8, 12]}
+        textAlign="center"
+      >
         <SimpleGrid columns={columnCount} spacing={10} maxW="6xl" mx="auto">
           {features.map((f, i) => (
             <Box
@@ -60,7 +65,7 @@ const Home = () => {
             </Box>
           ))}
         </SimpleGrid>
-      </Box>
+      </Flex>
     </Box>
   );
 };

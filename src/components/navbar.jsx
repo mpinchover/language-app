@@ -43,12 +43,15 @@ const Navbar = () => {
       {/* Centered Title */}
       <Box flex="1">
         <Heading
+          fontFamily={`'Orbitron', sans-serif`}
           fontSize={{ base: "3xl", md: "5xl" }}
-          fontWeight="extrabold"
-          bgGradient="linear(to-r, blue.400, cyan.400)"
+          fontWeight="black"
+          // fontFamily={`'Fugaz One', cursive`}
+          bgGradient="linear(to-r, teal.300, blue.500, purple.600)"
           bgClip="text"
+          letterSpacing="wide"
         >
-          LANGUAGE APP
+          nikud
         </Heading>
       </Box>
 
