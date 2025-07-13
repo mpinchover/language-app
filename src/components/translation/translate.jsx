@@ -28,6 +28,7 @@ const Translate = () => {
   const [articleContent, setArticleContent] = useState();
   const [machineGeneratedData, setMachineGeneratedData] = useState({});
   const [tappedTokenIndex, setTappedTokenIndex] = useState(null); // ✅ Track tapped token on mobile
+  const [tappedTokenMap, setTappedTokenMap] = useState({});
 
   const isMobile = useBreakpointValue({ base: true, md: false }); // ✅ Track if device is mobile
   const auth = getAuth();
@@ -107,81 +108,67 @@ const Translate = () => {
   }, [translation_uuid]);
 
   // ✅ Token renderer with mobile + desktop behavior
-  const renderTokenBlock = (tokens) => (
+  const renderTokenBlock = (tokens, sentenceIdx) => (
     <Box
       display="flex"
       flexWrap="wrap"
       gap={2}
       lineHeight="2.5rem"
-      onClick={() => setTappedTokenIndex(null)} // ✅ Tapping outside a word hides tooltips
+      onClick={() =>
+        setTappedTokenMap((prev) => ({ ...prev, [sentenceIdx]: null }))
+      }
     >
       {tokens.map(({ he, nikud, en }, j) => {
-        if (isMobile) {
-          const isTapped = tappedTokenIndex === j;
-          return (
+        const isTapped = tappedTokenMap[sentenceIdx] === j;
+
+        return (
+          <Tooltip
+            key={j}
+            isOpen={isMobile ? isTapped : undefined}
+            onOpen={() =>
+              isMobile &&
+              setTappedTokenMap((prev) => ({ ...prev, [sentenceIdx]: j }))
+            }
+            onClose={() =>
+              isMobile &&
+              setTappedTokenMap((prev) => ({ ...prev, [sentenceIdx]: null }))
+            }
+            label={
+              <Box p={2}>
+                <Text fontSize="md" color="blue.500">
+                  {nikud}
+                </Text>
+                <Text fontSize="sm" color="gray.600">
+                  {en}
+                </Text>
+              </Box>
+            }
+            placement="top"
+            hasArrow
+            bg="gray.100"
+            color="black"
+            borderRadius="md"
+            boxShadow="md"
+          >
             <Box
-              key={j}
               as="span"
               fontSize="xl"
               px={2}
               py={1}
+              _hover={{ bg: "gray.100" }}
               borderRadius="md"
               cursor="pointer"
-              bg={isTapped ? "gray.100" : "transparent"}
               onClick={(e) => {
-                e.stopPropagation(); // ✅ Prevents parent from closing on tap
-                setTappedTokenIndex(j);
+                if (isMobile) {
+                  e.stopPropagation();
+                  setTappedTokenMap((prev) => ({ ...prev, [sentenceIdx]: j }));
+                }
               }}
             >
-              <Text>{he}</Text>
-              {isTapped && (
-                <Box mt={1}>
-                  <Text fontSize="md" color="blue.500">
-                    {nikud}
-                  </Text>
-                  <Text fontSize="sm" color="gray.600">
-                    {en}
-                  </Text>
-                </Box>
-              )}
+              {he}
             </Box>
-          );
-        } else {
-          // ✅ Desktop hover version
-          return (
-            <Tooltip
-              key={j}
-              label={
-                <Box p={2}>
-                  <Text fontSize="md" color="blue.500">
-                    {nikud}
-                  </Text>
-                  <Text fontSize="sm" color="gray.600">
-                    {en}
-                  </Text>
-                </Box>
-              }
-              placement="top"
-              hasArrow
-              bg="gray.100"
-              color="black"
-              borderRadius="md"
-              boxShadow="md"
-            >
-              <Box
-                as="span"
-                fontSize="xl"
-                px={2}
-                py={1}
-                _hover={{ bg: "gray.100" }}
-                borderRadius="md"
-                cursor="pointer"
-              >
-                {he}
-              </Box>
-            </Tooltip>
-          );
-        }
+          </Tooltip>
+        );
       })}
     </Box>
   );
@@ -242,12 +229,13 @@ const Translate = () => {
                 flexDir={{ base: "column", md: "row" }}
               >
                 <Box flex={1} p={4} borderRadius="xl" bg={bgColor} dir="rtl">
-                  {renderTokenBlock(leftSentence)}
+                  {renderTokenBlock(leftSentence, idx)}
                 </Box>
 
                 {!isMobile && (
                   <Box flex={1} p={4} borderRadius="xl" bg={bgColor} dir="rtl">
-                    {renderTokenBlock(rightSentence)}
+                    {renderTokenBlock(rightSentence, idx + 10000)}{" "}
+                    {/* offset index to separate tooltips */}
                   </Box>
                 )}
               </HStack>
