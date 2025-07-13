@@ -23,10 +23,11 @@ const Home = () => {
         <Flex direction={{ base: "column", md: "row" }} align="center" gap={8}>
           <Box w={{ base: "100%", md: "50%" }}>
             <Heading size="lg" mb={4}>
-              Choose an article to read.
+              Choose an article to read
             </Heading>
             <Text fontSize="md" color="gray.600">
-              We break it down into basic, intermediate and advanced versions.
+              Each article is broken into nto basic, intermediate and advanced
+              versions.
             </Text>
           </Box>
           <Box w={{ base: "100%", md: "50%" }}>

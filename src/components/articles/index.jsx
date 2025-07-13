@@ -68,7 +68,7 @@ const Articles = () => {
     ));
   };
 
-  if (isLoading) {
+  if (loading) {
     return (
       <Center h="80vh">
         <Spinner size="xl" color="blue.500" thickness="4px" speed="0.65s" />
