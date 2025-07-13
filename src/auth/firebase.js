@@ -13,13 +13,13 @@ import { initializeApp } from "firebase/app";
 //   appId: "1:977708840689:web:586b000f27496292849b50",
 // };
 const firebaseConfig = {
-  apiKey: "AIzaSyDDbFIGq8_VKlLrLKjePV9sgsqJz_Rs6wg",
-  authDomain: "translation-app-7398d.firebaseapp.com",
-  projectId: "translation-app-7398d",
-  storageBucket: "translation-app-7398d.firebasestorage.app",
-  messagingSenderId: "346894616039",
-  appId: "1:346894616039:web:04cea99642be61d892e942",
-  measurementId: "G-5TNLHB1MFP",
+  apiKey: "AIzaSyC4iG7K-zWMrVupas4niPU5qYDoDhPgbn0",
+  authDomain: "translation-app-93a58.firebaseapp.com",
+  projectId: "translation-app-93a58",
+  storageBucket: "translation-app-93a58.firebasestorage.app",
+  messagingSenderId: "821987079517",
+  appId: "1:821987079517:web:7e8c0966cd6d13c75064b4",
+  measurementId: "G-B9B5RTVG6K",
 };
 
 // Initialize Firebase
