@@ -50,10 +50,14 @@ const Articles = () => {
       <Box
         key={i}
         p={6}
-        borderRadius="xl"
-        boxShadow="sm"
-        bg="gray.50"
-        _hover={{ bg: "gray.100", cursor: "pointer", boxShadow: "md" }}
+        // borderRadius="xl"
+        // boxShadow="sm"
+        // bg="gray.50"
+        borderColor="grey.100"
+        borderWidth="1px"
+        borderRadius="lg"
+        // border="solid 1px grey.500"
+        _hover={{ borderColor: "grey.800", cursor: "pointer", boxShadow: "sm" }}
         transition="all 0.2s ease-in-out"
         w="100%"
         onClick={() => handleClickArticle(e.uuid)} // ✅ click handler here
