@@ -42,17 +42,20 @@ const SignUp = ({ setLoginState }) => {
         type="email"
         placeholder="Email"
         value={email}
+        color="white"
         onChange={(e) => setEmail(e.target.value)}
       />
       <Input
         type="password"
         placeholder="Password"
         value={password}
+        color="white"
         onChange={(e) => setPassword(e.target.value)}
       />
       <Input
         type="password"
         placeholder="Confirm password"
+        color="white"
         value={confirmPassword}
         onChange={(e) => setConfirmPassword(e.target.value)}
       />

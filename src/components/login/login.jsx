@@ -33,6 +33,7 @@ const Login = () => {
       display="flex"
       justifyContent="center"
       alignItems="center"
+      bgGradient="linear(to-b, black, purple.900)"
       p={6}
     >
       <Stack maxW="xl" w="full" spacing={4}>

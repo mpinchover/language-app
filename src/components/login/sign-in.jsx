@@ -41,6 +41,8 @@ const SignIn = ({ setLoginState }) => {
         type="email"
         placeholder="Email"
         value={email}
+        color="white"
+        // fontWeight="bold"
         onChange={(e) => setEmail(e.target.value)}
         mb={2}
       />
@@ -48,6 +50,7 @@ const SignIn = ({ setLoginState }) => {
         type="password"
         placeholder="Password"
         value={password}
+        color="white"
         onChange={(e) => setPassword(e.target.value)}
         mb={4}
       />
