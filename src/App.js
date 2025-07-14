@@ -27,6 +27,7 @@ import { getAuth } from "firebase/auth";
 import Home from "./components/home/home";
 import Articles from "./components/articles";
 import { useAuth } from "./auth/auth-context";
+import About from "./about";
 
 const RootRedirect = () => {
   const { user, loading } = useAuth();
@@ -97,6 +98,7 @@ function App() {
                 </ProtectedRoute>
               }
             />
+            <Route path="/about" element={<About />} />
           </Routes>
           {/* </BrowserRouter> */}
         </Box>
